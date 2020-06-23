@@ -1,0 +1,55 @@
+#+title:Network Programming Project
+#+description: Le but de ce projet est de programmer une application réseau distribuée qui permet à un ensemble des utilisateurs connecter à un réseau LAN (filaire ou Wifi) de communiquer entre eux en utilisant les différents types de communication (message, voix et vidéo) et de partager des fichiers.
+
+* TODO [0/8] Tasks
+
+  1) [ ] Creer la scene de connexion
+    #+begin_quote
+    Il y aura deux champs username et password, et de bouttons "Connecter" "S'inscrire" si le boutton s'inscrire est cliquee il y aura 5 champs les champs supplementaires seront le nom le prenm est la confirmation du password
+    #+end_quote
+  2) [ ] Creer la base de donnees au niveau du serveur
+    #+begin_quote
+    La clee primaire serai le username de l'utilisateur
+    #+end_quote
+  3) [ ] Creer la scene des messages
+    #+begin_quote
+    Elle sera divisee en 3, une frame pour voir les clients connectee et aussi les groups et la deuxieme elle aura des informations sur le destinataire, et la troisieme aura les messages
+    #+end_quote
+  3) [ ] Gerer l'ajout d'un group d'utilisateur a une conversations
+    #+begin_quote
+    Elle sera divisee en 3, une frame pour voir les clients connectee et aussi les groups et la deuxieme elle aura des informations sur le destinataire, et la troisieme aura les messages
+    #+end_quote
+  4) [ ] Gerer l'envoi des messages text
+    #+begin_quote
+    Le messages aura une limite qui sera defini pendent la realisation 
+    #+end_quote
+  5) [ ] Gerer l'envoi des images
+    #+begin_quote
+    L'image est limite a une resolution ou une taille qui sera defini pendent la realisation
+    #+end_quote
+  6) [ ] Gerer l'envoi des messages audio
+    #+begin_quote
+    Le message vocale sera limite par une duree qui sera defini pendent la realisation 
+    #+end_quote
+  7) [ ] Gerer l'envoi des videos
+    #+begin_quote
+    La video ne doit pas depasser une duree ou taille qui sera defini pendent la realisation
+    #+end_quote
+  8) [ ] Gerer l'envoi des fichiers
+    #+begin_quote
+    Le fichier aura une limite de taille qui sera defini pendent la realisation
+    #+end_quote
+
+* TODO [0/1] Secondary Tasks
+
+  1) [ ] Permettre au utilisateurs d'avoir une photo de profil
+
+* Objectives
+
+** [0/2] Etape 1 
+  
+   1) [ ] Détection automatique de tous les utilisateurs connectés au réseau.
+   2) [ ] Un utilisateur peut sélectionner un destinataire parmi les utilisateurs connectés ou un groupe de destinataires et leur envoyer un message ou un fichier comme pièce jointe.
+
+** [/] Etape 2
+   1) [ ] Un utilisateur peut sélectionner un destinataire ou un groupe de destinataires et dialoguer avec eux avec la possibilité de voir ses interlocuteurs
