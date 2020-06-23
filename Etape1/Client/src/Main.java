@@ -46,26 +46,26 @@ public class Main {
 		switch(response) {
 		//Successful connection
 		case 0:{
-			if((int)list.get(0)==0) System.out.println("Votre compte a été crée ! vous êtes maintenant connecté");
+			if((int)list.get(0)==0) System.out.println("Votre compte a ete cree ! vous etes maintenant connectee");
 			System.out.println("<== Affichage de la messagerie ==>");
 			connected(pseudo);
 		}
 		//failed inscription
 		break;
-		case 1: System.out.println("Le pseudo que vous avez entrer existe déjà");
+		case 1: System.out.println("Le pseudo que vous avez entrer existe deje");
 		break;
-		case 2: System.out.println("L'email que vous avez entrer existe déjà");
+		case 2: System.out.println("L'email que vous avez entrer existe deja");
 		break;
 		//failed connection
-		case 3: System.out.println("Pseudo erroné");
+		case 3: System.out.println("Pseudo erronee");
 		break;
-		case 4: System.out.println("Mot de passe erroné");
+		case 4: System.out.println("Mot de passe erronee");
 		break;
 		}
 	}
 
 	private static void connected(String pseudo) throws RemoteException {
-		// on définit un timer pour que le serveur sache que le client est toujours connecté
+		// on definit un timer pour que le serveur sache que le client est toujours connectee
 		TimerTask repeatedTask = new TimerTask() {
 	        public void run() {
 	        	ArrayList list = new ArrayList();
