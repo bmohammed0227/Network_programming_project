@@ -97,9 +97,11 @@ public class Main {
 	
 
 	private static int send(ArrayList list) throws RemoteException {
+    String SERVER_IP = "localhost";
+    // String SERVER_IP = "172.23.139.139";
 		SentList stub = null;
 		try {
-			stub =  (SentList)Naming.lookup("rmi://localhost:1099/list");
+			stub =  (SentList)Naming.lookup("rmi://"+SERVER_IP+"/list");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
