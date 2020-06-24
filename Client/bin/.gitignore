@@ -1,5 +1,10 @@
-/messagerie2.fxml
+/application.fxml
 /chat_window.fxml
-/ChatController.class
 /ChatController$1.class
+/ChatController.class
+/Controller$1.class
+/Controller$2.class
 /Controller$3.class
+/Controller.class
+/Main.class
+/SentList.class
