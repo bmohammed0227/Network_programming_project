@@ -24,6 +24,8 @@ public class Compte {
         this.password = password;
         this.email = email;
         this.status = status;
+        this.familyname = familyname;
+        this.firstname = firstname;
         this.date = new Date();
     }
 
@@ -61,7 +63,7 @@ public class Compte {
 
     public String toString() {
         return "pseudo : " + this.getPseudo() + ", password : " + this.getPassword() + ", email : " + this.getEmail()
-                + ", status : " + this.isStatus() + "\n";
+                + ", status : " + this.isStatus() + "\n"+", Nom : "+this.getFamilyname()+", Prénom : "+this.getFirstname();
     }
 
     public Date getDate() {

@@ -1,4 +1,0 @@
-./Main.java
-./SentList.java
-./SentList_Imp.java
-./Compte.java

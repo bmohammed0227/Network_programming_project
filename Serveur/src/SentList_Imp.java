@@ -1,12 +1,18 @@
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -17,8 +23,7 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
 
     protected SentList_Imp() throws RemoteException {
         super();
-        //	Connect to the database
-        connection = DatabaseConnection.getDatabaseConnection();
+        connection = getDatabaseConnection();
         if (connection == null) {
             System.out.println("Can't connect to the database");
         }
@@ -33,16 +38,17 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
             }
         }
 
-        // on definit un timer pour actualiser les infos a chaque 2 minutes
+        // on definit un timer pour actualiser les infos
         TimerTask repeatedTask = new TimerTask() {
             public void run() {
-                System.out.println("Affichage des clients connectees : ");
+                System.out.println("Affichage des clients connectee : ");
                 System.out.println("-----------");
-                for (Compte compte : comptes) {
-                    if (compte.isStatus() && ((new Date().getTime() - compte.getDate().getTime()) / 1000 > 1))
-                        compte.setStatus(false);
-                    if (compte.isStatus())
-                        System.out.println(compte.getPseudo());
+                for (int i = 0; i < comptes.size(); i++) {
+                    Compte c = comptes.get(i);
+                    if (c.isStatus() && ((new Date().getTime() - c.getDate().getTime()) / 1000 > 1))
+                        c.setStatus(false);
+                    if (c.isStatus())
+                        System.out.println(c.getPseudo());
                 }
                 System.out.println("-----------");
             }
@@ -56,97 +62,54 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
         String pseudo = (String)list.get(1);
         if((int)list.get(0) == 0) { // Demande d'inscription
             String email = (String) list.get(3);
-            if (isPseudoReserved(pseudo))
+            if (searchByPseudo(pseudo) != null)
                 return 1;
-            else if (isEmailReserved(email))
+            else if (searchByEmail(email) != null)
                 return 2;
             else {
                 // Ajout du nouvel utilisteur a la liste de comptes
-                Compte compte = new Compte(pseudo, (String)list.get(2), email, true);
-                addUserToDatabase(compte);
-                comptes.add(compte);
+                //Compte c = new Compte(pseudo, (String)list.get(2), email, true);
+                Compte c = new Compte(pseudo, email, (String) list.get(5),(String) list.get(4), (String)list.get(2), true);
+                registerNewUser(c);
+                comptes.add(c);
             }
         } else if ((int) list.get(0) == 1) { // Demande de connexion
             String password = (String) list.get(2);
-            Compte compte = searchByPseudo(pseudo);
-            if (compte == null)
+            Compte c = searchByPseudo(pseudo);
+            if (c == null)
                 return 3;
-            else if (!compte.getPassword().equals(password))
+            else if (!c.getPassword().equals(password))
                 return 4;
             else {
                 // mis a jour de l'etat de l'utilisateur
-                compte.setDate();
+                c.setDate();
             }
         } else if ((int) list.get(0) == 2) { // Confirmation de presence
-            Compte compte = searchByPseudo(pseudo);
-            compte.setDate();
+            Compte c = searchByPseudo(pseudo);
+            c.setDate();
         } else { // Deconnexion
-            Compte compte = searchByPseudo(pseudo);
-            compte.setStatus(false);
+            Compte c = searchByPseudo(pseudo);
+            c.setStatus(false);
         }
         return 0;
     }
 
-    // //  Add these when you start using button on GUI
-    // @Override
-    // public boolean connect(String pseudo, String password) {
-    //     Compte compte = searchByPseudo(pseudo);
-    //     if (compte != null)
-    //         if (compte.getPassword().equals(password)) {
-    //             return true;  // Accept connection and start chat window
-    //         }
-    //     return false;  // Refuse connection (username or password incorrect)
-    // }
-
-    // @Override
-    // public int register(Compte compte) {
-    //     if (isPseudoReserved(compte.getPseudo()))
-    //         return -1;  // Refuse registration (Username already used)
-    //     else if (isEmailReserved(compte.getEmail()))
-    //         return -2;  // Refuse registration (Email already used)
-    //     else
-    //         if(addUserToDatabase(compte))
-    //             return 0;  // User registered successfully
-    //         else
-    //             return -3;  // Error while trying to add the user to the database
-    // }
-
-    // @Override
-    // public void checkStatus(Compte compte, boolean isActive) {
-    //     Compte searchResult = searchByPseudo(compte.getPseudo());
-    //     if (isActive)
-    //         compte.setDate();
-    //     else
-    //         compte.setStatus(false);
-
-    // }
-
     private Compte searchByEmail(String email) {
-        for (Compte compte : comptes) {
-            if (compte.getEmail().equals(email))
-                return compte;
+        Iterator<Compte> it = this.comptes.iterator();
+        while (it.hasNext()) {
+            Compte c = it.next();
+            if (c.getEmail().equals(email))
+                return c;
         }
         return null;
     }
 
-    private boolean isEmailReserved(String email) {
-        if (searchByEmail(email) == null)
-            return false;
-        else
-            return true;
-    }
-
-    private boolean isPseudoReserved(String pseudo) {
-        if (searchByPseudo(pseudo) == null)
-            return false;
-        else
-            return true;
-    }
-
     private Compte searchByPseudo(String pseudo) {
-        for (Compte compte : comptes) {
-            if (compte.getPseudo().equals(pseudo))
-                return compte;
+        Iterator<Compte> it = this.comptes.iterator();
+        while (it.hasNext()) {
+            Compte c = it.next();
+            if (c.getPseudo().equals(pseudo))
+                return c;
         }
         return null;
     }
@@ -155,8 +118,22 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
         return this.comptes;
     }
 
+    // connect to the database file
+    private Connection getDatabaseConnection() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            System.out.println("Driver loaded");
+            Connection connection = DriverManager.getConnection("jdbc:sqlite:database.db");
+            System.out.println("Connected Successfully");
+            return connection;
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // registers a user in the database and returns true if succeeded or false if not
-    private boolean addUserToDatabase(Compte compte) {
+    private boolean registerNewUser(Compte compte) {
         try {
             Statement statement = connection.createStatement();
             String query = "INSERT INTO USERS " + "(username, email, firstname, familyname, password) "
