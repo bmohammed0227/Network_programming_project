@@ -68,18 +68,9 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
                 return 2;
             else {
                 // Ajout du nouvel utilisteur a la liste de comptes
-                Compte c= new Compte(pseudo, (String)list.get(2), email, true);
+                Compte c = new Compte(pseudo, (String)list.get(2), email, true);
                 registerNewUser(c);
                 comptes.add(c);
-                // Ecriture du nouvel utilisateur sur le fichier comptes.txt
-                try (BufferedWriter br = new BufferedWriter(new FileWriter(new File("comptes.txt"), true))) {
-                    br.write(pseudo + "\n");
-                    br.write((String) list.get(2) + "\n");
-                    br.write(email + "\n");
-                    System.out.println("Ecriture effectuee");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         } else if ((int) list.get(0) == 1) { // Demande de connexion
             String password = (String) list.get(2);
@@ -126,6 +117,7 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
         return this.comptes;
     }
 
+    // connect to the database file
     private Connection getDatabaseConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -139,6 +131,7 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
         return null;
     }
 
+    // registers a user in the database and returns true if succeeded or false if not
     private boolean registerNewUser(Compte compte) {
         try {
             Statement statement = connection.createStatement();
@@ -154,6 +147,7 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
         }
     }
 
+    // executes SELECT * FROM USERS and add every user to the ArrayList comptes then sends true if succeeded or false if not
     private boolean getAllUsers() {
         try{
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM USERS");
