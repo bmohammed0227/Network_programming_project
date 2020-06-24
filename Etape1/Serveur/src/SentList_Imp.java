@@ -54,6 +54,7 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
             }
         };
         Timer timer = new Timer("Timer");
+        timer.scheduleAtFixedRate(repeatedTask, 0, 1000);
     }
 
     @Override

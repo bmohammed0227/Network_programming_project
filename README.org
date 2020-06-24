@@ -51,5 +51,5 @@
    1) [ ] Détection automatique de tous les utilisateurs connectés au réseau.
    2) [ ] Un utilisateur peut sélectionner un destinataire parmi les utilisateurs connectés ou un groupe de destinataires et leur envoyer un message ou un fichier comme pièce jointe.
 
-** [/] Etape 2
+** [0/1] Etape 2
    1) [ ] Un utilisateur peut sélectionner un destinataire ou un groupe de destinataires et dialoguer avec eux avec la possibilité de voir ses interlocuteurs
