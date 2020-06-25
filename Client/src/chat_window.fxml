@@ -46,8 +46,12 @@
                               <VBox fx:id="chatVBox" prefHeight="526.0" prefWidth="480.0" />
                            </content>
                         </ScrollPane>
-                        <TextArea fx:id="chatBox" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="40.0" />
-                        <Button fx:id="buttonSend" mnemonicParsing="false" onAction="#sendClicked" prefHeight="44.0" prefWidth="40.0" text="Send" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                        <TextArea fx:id="chatBox" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" />
+                        <Button mnemonicParsing="false" onAction="#sendFileClicked" prefHeight="44.0" prefWidth="40.0" text="file" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0" />
+                        <Button mnemonicParsing="false" onAction="#sendImageClicked" prefHeight="44.0" prefWidth="40.0" text="img" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="80.0" />
+                        <Button fx:id="buttonSend" mnemonicParsing="false" onAction="#sendMessageClicked" prefHeight="44.0" prefWidth="40.0" text="txt" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                        <Button layoutX="430.0" layoutY="536.0" mnemonicParsing="false" onAction="#sendAudioClicked" prefHeight="44.0" prefWidth="40.0" text="aud" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="160.0" />
+                        <Button layoutX="390.0" layoutY="536.0" mnemonicParsing="false" onAction="#sendVideoClicked" prefHeight="44.0" prefWidth="40.0" text="vid" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="120.0" />
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">

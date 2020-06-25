@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -15,6 +16,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import javax.swing.ImageIcon;
 
 public class ChatServiceImpl extends UnicastRemoteObject implements ChatService {
 
@@ -174,6 +177,12 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 		return CHAT_OBSERVABLE.sendTextTo(sender, receiver, text);
 	}
 	
+	@Override
+	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
+		System.out.println("ChatService : sending");
+		return CHAT_OBSERVABLE.sendImageTo(sender, receiver, image);
+	}
+
 	@Override
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.addChatObserver(chatObserver);
