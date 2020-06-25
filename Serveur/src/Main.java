@@ -10,10 +10,10 @@ public class Main {
 	}
 
 	private static void receive_choice() {
-		SentList_Imp skeleton = null;
+		ChatServiceImpl skeleton = null;
 		try {
 			LocateRegistry.createRegistry(1099);
-			skeleton = new SentList_Imp();
+			skeleton = new ChatServiceImpl();
 			Naming.rebind("rmi://localHost:1099/list", skeleton);
 		} catch (Exception e) {
 			e.printStackTrace();

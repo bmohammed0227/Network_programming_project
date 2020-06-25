@@ -43,7 +43,7 @@
                      <children>
                         <ScrollPane fx:id="chatScrollPane" hbarPolicy="NEVER" prefHeight="526.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <content>
-                              <VBox prefHeight="526.0" prefWidth="500.0" />
+                              <VBox fx:id="chatVBox" prefHeight="526.0" prefWidth="480.0" />
                            </content>
                         </ScrollPane>
                         <TextArea fx:id="chatBox" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="40.0" />

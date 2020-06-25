@@ -16,12 +16,13 @@ import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class SentList_Imp extends UnicastRemoteObject implements SentList {
+public class ChatServiceImpl extends UnicastRemoteObject implements ChatService {
 
+	private static final ChatObservable CHAT_OBSERVABLE = new ChatObservable();
     private Connection connection;
     private ArrayList<Compte> comptes = new ArrayList<>();
 
-    protected SentList_Imp() throws RemoteException {
+    protected ChatServiceImpl() throws RemoteException {
         super();
         connection = getDatabaseConnection();
         if (connection == null) {
@@ -165,4 +166,16 @@ public class SentList_Imp extends UnicastRemoteObject implements SentList {
             return false;
         }
     }
+    
+    
+	@Override
+	public boolean sendTextTo(String sender, String receiver, String text) throws RemoteException {
+		System.out.println("ChatService : sending");
+		return CHAT_OBSERVABLE.sendTextTo(sender, receiver, text);
+	}
+	
+	@Override
+	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {
+		return CHAT_OBSERVABLE.addChatObserver(chatObserver);
+	}
 }

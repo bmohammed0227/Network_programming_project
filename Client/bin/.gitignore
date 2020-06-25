@@ -1,10 +1,13 @@
-/application.fxml
-/chat_window.fxml
 /ChatController$1.class
 /ChatController.class
+/ChatObserver.class
+/ChatObserverImpl.class
+/ChatService.class
 /Controller$1.class
 /Controller$2.class
 /Controller$3.class
 /Controller.class
 /Main.class
-/SentList.class
+/application.fxml
+/chat_window.fxml
+/sources.txt
