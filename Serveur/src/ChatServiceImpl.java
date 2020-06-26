@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -185,20 +184,25 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	
 	@Override
 	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
-		try {
-			File Written_file = new File(file.getName());
-			InputStream inputStream = new FileInputStream(file);
-			OutputStream outputStream = new FileOutputStream(Written_file);
-			int byteRead;
-			while ((byteRead = inputStream.read()) != -1) {
-					outputStream.write(byteRead);
-			}
-			inputStream.close();
-			outputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
+		new Thread() {
+	            public void run() {
+	            	try {
+	        			File Written_file = new File(file.getName());
+	        			InputStream inputStream = new FileInputStream(file);
+	        			OutputStream outputStream = new FileOutputStream(Written_file);
+	        			int byteRead;
+	        			while ((byteRead = inputStream.read()) != -1) {
+	        					outputStream.write(byteRead);
+	        			}
+	        			inputStream.close();
+	        			outputStream.close();
+	        			CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
+	        		} catch (IOException e) {
+	        			e.printStackTrace();
+	        		}
+	            }
+	        }.start();
+	     return true;
 	}
 	
 	@Override

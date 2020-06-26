@@ -339,22 +339,27 @@ public class ChatController implements Initializable, ChatObserver {
 	public boolean refreshFiles(String sender, String receiver, File file) {
 		Text textMessage = new Text("["+file.getName()+"]");
 		textMessage.addEventFilter(MouseEvent.MOUSE_CLICKED, event ->{
-			System.out.println("Downloading the File..");
-			try {
-				File fileDownloaded = chatService.getFile(file.getName());
-				File Written_file = new File(file.getName());
-				InputStream inputStream = new FileInputStream(file);
-				OutputStream outputStream = new FileOutputStream(Written_file);
-				int byteRead;
-				while ((byteRead = inputStream.read()) != -1) {
-						outputStream.write(byteRead);
-				}
-				inputStream.close();
-				outputStream.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			Platform.runLater(new Runnable() {
+	            @Override public void run() {
+	            	System.out.println("Downloading the File..");
+	    			try {
+	    				File fileDownloaded = chatService.getFile(file.getName());
+	    				File Written_file = new File(file.getName());
+	    				InputStream inputStream = new FileInputStream(file);
+	    				OutputStream outputStream = new FileOutputStream(Written_file);
+	    				int byteRead;
+	    				while ((byteRead = inputStream.read()) != -1) {
+	    						outputStream.write(byteRead);
+	    				}
+	    				inputStream.close();
+	    				outputStream.close();
+	    			} catch (IOException e) {
+	    				e.printStackTrace();
+	    			}
+	            }
+	        });
 		});
+		
 		textMessage.getStyleClass().add("textFile");
 		TextFlow tempFlow = new TextFlow();
 		if(!username.equals(sender)) {
