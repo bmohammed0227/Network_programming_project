@@ -1,5 +1,6 @@
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -21,6 +22,13 @@ public class ChatObservable {
     public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
         for (ChatObserver observer : chatObserverList) {
             observer.refreshImages(sender, receiver, image);
+        }
+        return true;
+    }
+    
+    public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
+    	for (ChatObserver observer : chatObserverList) {
+            observer.refreshFiles(sender, receiver, file);
         }
         return true;
     }

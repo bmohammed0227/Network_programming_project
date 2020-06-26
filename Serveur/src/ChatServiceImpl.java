@@ -1,9 +1,9 @@
-import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
@@ -184,7 +184,30 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
 		return CHAT_OBSERVABLE.sendImageTo(sender, receiver, image);
 	}
-
+	
+	@Override
+	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
+		new Thread() {
+	            public void run() {
+	            	try {
+	        			File Written_file = new File(file.getName());
+	        			InputStream inputStream = new FileInputStream(file);
+	        			OutputStream outputStream = new FileOutputStream(Written_file);
+	        			int byteRead;
+	        			while ((byteRead = inputStream.read()) != -1) {
+	        					outputStream.write(byteRead);
+	        			}
+	        			inputStream.close();
+	        			outputStream.close();
+	        			CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
+	        		} catch (IOException e) {
+	        			e.printStackTrace();
+	        		}
+	            }
+	        }.start();
+	     return true;
+	}
+	
 	@Override
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.addChatObserver(chatObserver);
@@ -204,5 +227,9 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
 			throws RemoteException, IOException {
 		return CHAT_OBSERVABLE.sendVideoTo(sender, receiver, filename, remoteFileData);
+
+  @Override
+	public File getFile(String name) throws RemoteException {
+		return new File(name);
 	}
 }
