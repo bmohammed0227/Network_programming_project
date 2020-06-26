@@ -3,6 +3,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
@@ -18,6 +19,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
+
+import com.healthmarketscience.rmiio.RemoteInputStream;
+import com.healthmarketscience.rmiio.RemoteInputStreamClient;
 
 public class ChatServiceImpl extends UnicastRemoteObject implements ChatService {
 
@@ -194,5 +198,11 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	@Override
 	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.removeChatObserver(chatObserver);
+	}
+
+	@Override
+	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
+			throws RemoteException, IOException {
+		return CHAT_OBSERVABLE.sendVideoTo(sender, receiver, filename, remoteFileData);
 	}
 }

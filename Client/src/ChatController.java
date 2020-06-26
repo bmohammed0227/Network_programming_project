@@ -1,8 +1,14 @@
 import java.awt.FileDialog;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Naming;
@@ -14,6 +20,13 @@ import java.util.Timer;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+
+import org.apache.commons.io.IOUtils;
+
+import com.healthmarketscience.rmiio.RemoteInputStream;
+import com.healthmarketscience.rmiio.RemoteInputStreamClient;
+import com.healthmarketscience.rmiio.RemoteInputStreamServer;
+import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
 
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -170,8 +183,29 @@ public class ChatController implements Initializable, ChatObserver {
     }
 
     @FXML
-    void sendVideoClicked(ActionEvent event) {
-
+    void sendVideoClicked(ActionEvent event) throws RemoteException, IOException {
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle("Selectionez une image pour l'envoyer:");
+    	ExtensionFilter mp4Filter = new ExtensionFilter("Videos MP4 (.mp4)", "*.mp4");
+    	ExtensionFilter mkvFilter = new ExtensionFilter("Videos MKV (.mkv)", "*.mkv");
+    	fileChooser.getExtensionFilters().add(mp4Filter);
+    	fileChooser.getExtensionFilters().add(mkvFilter);
+    	File video = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+    	String videoName = video.getName();
+    	if (videoName == null)
+		  System.out.println("You cancelled the choice");
+    	else if(video.length() < 250000000) {
+    		System.out.println("You chose " + videoName);
+    		
+    		FileInputStream inputStream = new FileInputStream(video);
+    		
+    		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
+    		chatService.sendVideoTo(username, receiver, videoName, remoteFileData);
+    	}
+    	else {
+    		Alert alert = new Alert(AlertType.ERROR, "The image "+videoName+" is larger than 250 MB !", ButtonType.OK);
+    		alert.showAndWait();
+    	}
     }
 
     
@@ -221,14 +255,12 @@ public class ChatController implements Initializable, ChatObserver {
     @Override
     public boolean refreshImages(String sender, String receiver, ImageIcon image) {
     	System.out.println(sender + " has sent an image");
-//    	Image imageMessage = new Image(image);
         TextFlow tempFlow = new TextFlow();
         if(!username.equals(sender)) {
         	Text textName = new Text(sender +": ");
         	textName.getStyleClass().add("textName");
         	tempFlow.getChildren().add(textName);
         }
-//        tempFlow.setMaxWidth(350);
         
         TextFlow flow = new TextFlow(tempFlow);
         
@@ -274,6 +306,77 @@ public class ChatController implements Initializable, ChatObserver {
         return true;
     }
 
+
+ // Load messages when someone sends a message
+    @Override
+    public boolean refreshVideos(String sender, String receiver, String filename, RemoteInputStream remoteFileData) throws RemoteException {
+    	System.out.println(sender + " has sent an "+filename);
+		InputStream inputStream = null;
+		try {
+			inputStream = RemoteInputStreamClient.wrap(remoteFileData);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	File videoFile = new File(filename);
+		try(OutputStream outputStream = new FileOutputStream(videoFile)){
+			IOUtils.copy(inputStream, outputStream);
+		} catch (FileNotFoundException e) {
+			// handle exception here
+		} catch (IOException e) {
+			// handle exception here
+		}
+		System.out.println("Size: "+videoFile.length());
+//        TextFlow tempFlow = new TextFlow();
+//        if(!username.equals(sender)) {
+//        	Text textName = new Text(sender +": ");
+//        	textName.getStyleClass().add("textName");
+//        	tempFlow.getChildren().add(textName);
+//        }
+//        
+//        TextFlow flow = new TextFlow(tempFlow);
+//        
+//        HBox hbox = new HBox();
+//        Rectangle rectangle = new Rectangle();
+//        if(image.getIconWidth() > 300) {
+//        	rectangle.setWidth(300);
+//        	rectangle.setHeight(image.getIconHeight() * 300 / image.getIconWidth());
+//        }
+//        else {
+//        	rectangle.setWidth(image.getIconWidth());
+//			rectangle.setHeight(image.getIconHeight());
+//        }
+//        rectangle.getStyleClass().add("imageView");
+//
+//        // Create a buffered image with transparency
+//        BufferedImage bufferedImage = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+//
+//        // Draw the image on to the buffered image
+//        Graphics2D bGr = bufferedImage.createGraphics();
+//        bGr.drawImage(image.getImage(), 0, 0, null);
+//        bGr.dispose();
+//
+//        rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(bufferedImage, null)));
+//        if (!username.equals(sender)) {
+//        	tempFlow.getStyleClass().add("tempFlowFlipped");
+//        	flow.getStyleClass().add("textFlowFlipped");
+//        	chatVBox.setAlignment(Pos.TOP_LEFT);
+//        	hbox.setAlignment(Pos.CENTER_LEFT);
+//        	hbox.getChildren().add(flow);
+//        	hbox.getChildren().add(rectangle);
+//        }
+//        else {
+//        	tempFlow.getStyleClass().add("tempFlow");
+//        	flow.getStyleClass().add("textFlow");
+//        	hbox.setAlignment(Pos.BOTTOM_RIGHT);
+//        	hbox.getChildren().add(flow);
+//        	hbox.getChildren().add(rectangle);
+//        }
+//        
+//        hbox.getStyleClass().add("hbox");
+//        Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
+        return true;
+    }
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		String SERVER_IP = "localhost";

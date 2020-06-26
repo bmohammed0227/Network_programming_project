@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
+import com.healthmarketscience.rmiio.RemoteInputStream;
+
 public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserver {
 
 	private ChatObserver observer;
@@ -30,5 +32,11 @@ public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserve
 	@Override
 	public String getUsername() throws RemoteException {
 		return observer.getUsername();
+	}
+
+	@Override
+	public boolean refreshVideos(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
+			throws RemoteException {
+		return observer.refreshVideos(sender, receiver, filename, remoteFileData);
 	}
 }

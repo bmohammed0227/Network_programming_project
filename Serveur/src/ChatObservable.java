@@ -1,8 +1,11 @@
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
+
+import com.healthmarketscience.rmiio.RemoteInputStream;
 
 public class ChatObservable {
 	private final ArrayList<ChatObserver> chatObserverList = new ArrayList<>();
@@ -39,5 +42,12 @@ public class ChatObservable {
 
 	public boolean removeChatObserver(ChatObserver chatObserver) {
 		return chatObserverList.remove(chatObserver);
+	}
+
+	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData) throws RemoteException, IOException {
+        for (ChatObserver observer : chatObserverList) {
+            observer.refreshVideos(sender, receiver, filename, remoteFileData);
+        }
+        return true;
 	}
 }
