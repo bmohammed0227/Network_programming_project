@@ -1,3 +1,4 @@
+import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -30,5 +31,10 @@ public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserve
 	@Override
 	public String getUsername() throws RemoteException {
 		return observer.getUsername();
+	}
+
+	@Override
+	public boolean refreshFiles(String sender, String receiver, File file) throws RemoteException{
+		return observer.refreshFiles(sender, receiver, file);
 	}
 }

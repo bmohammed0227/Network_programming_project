@@ -1,8 +1,11 @@
-import java.awt.FileDialog;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.rmi.Naming;
@@ -12,7 +15,6 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import javafx.application.Platform;
@@ -32,15 +34,13 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -141,8 +141,20 @@ public class ChatController implements Initializable, ChatObserver {
     }
 
     @FXML
-    void sendFileClicked(ActionEvent event) {
-
+    void sendFileClicked(ActionEvent event) throws RemoteException {
+    	FileChooser fileChooser = new FileChooser();
+	    fileChooser.setTitle("Selectionez un fichier pour l'envoyer:");
+	    File file = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+	    if (file !=null) {
+	    	if(file.length() < 25000000) {
+	    		System.out.println("You chose " + file.getName());
+				chatService.sendFileTo(username, receiver, file);
+	    	}
+	    	else {
+	    		Alert alert = new Alert(AlertType.ERROR, "The file "+file.getName()+" is larger than 25 MB !", ButtonType.OK);
+	    		alert.showAndWait();
+	    	}
+	    }
     }
 
     @FXML
@@ -322,4 +334,55 @@ public class ChatController implements Initializable, ChatObserver {
 	public ChatObserver getChatObserver() {
 		return chatObserver;
 	}
+
+	@Override
+	public boolean refreshFiles(String sender, String receiver, File file) {
+		Text textMessage = new Text("["+file.getName()+"]");
+		textMessage.addEventFilter(MouseEvent.MOUSE_CLICKED, event ->{
+			System.out.println("Downloading the File..");
+			try {
+				File fileDownloaded = chatService.getFile(file.getName());
+				File Written_file = new File(file.getName());
+				InputStream inputStream = new FileInputStream(file);
+				OutputStream outputStream = new FileOutputStream(Written_file);
+				int byteRead;
+				while ((byteRead = inputStream.read()) != -1) {
+						outputStream.write(byteRead);
+				}
+				inputStream.close();
+				outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+		textMessage.getStyleClass().add("textFile");
+		TextFlow tempFlow = new TextFlow();
+		if(!username.equals(sender)) {
+			Text textName = new Text(sender +": ");
+				textName.getStyleClass().add("textName");
+				tempFlow.getChildren().add(textName);
+	        }
+		tempFlow.getChildren().add(textMessage);
+		tempFlow.setMaxWidth(350);
+		TextFlow flow = new TextFlow(tempFlow);
+		HBox hbox = new HBox();
+		if (!username.equals(sender)) {
+	        tempFlow.getStyleClass().add("tempFlowFlipped");
+	        flow.getStyleClass().add("textFileFlowFlipped");
+	        chatVBox.setAlignment(Pos.TOP_LEFT);
+	        hbox.setAlignment(Pos.CENTER_LEFT);
+	        hbox.getChildren().add(flow);
+		}
+		else {
+			tempFlow.getStyleClass().add("tempFlow");
+			flow.getStyleClass().add("textFileFlow");
+			hbox.setAlignment(Pos.BOTTOM_RIGHT);
+			hbox.getChildren().add(flow);
+		}
+		hbox.getStyleClass().add("hbox");
+		Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
+		return true;
+	}
+
+	
 }
