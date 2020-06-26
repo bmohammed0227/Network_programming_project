@@ -227,6 +227,7 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
 			throws RemoteException, IOException {
 		return CHAT_OBSERVABLE.sendVideoTo(sender, receiver, filename, remoteFileData);
+	}
 
   @Override
 	public File getFile(String name) throws RemoteException {

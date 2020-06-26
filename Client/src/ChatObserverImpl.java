@@ -39,6 +39,7 @@ public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserve
 	public boolean refreshVideos(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
 			throws RemoteException {
 		return observer.refreshVideos(sender, receiver, filename, remoteFileData);
+	}
 
   @Override
 	public boolean refreshFiles(String sender, String receiver, File file) throws RemoteException{
