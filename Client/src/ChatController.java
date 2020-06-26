@@ -8,6 +8,7 @@ import java.net.URL;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Timer;
 
@@ -37,7 +38,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -81,6 +84,8 @@ public class ChatController implements Initializable, ChatObserver {
     @FXML
     private VBox chatVBox;
     
+    @FXML
+    private VBox usersVBox;
     
 	private Timer timer;
 
@@ -91,6 +96,8 @@ public class ChatController implements Initializable, ChatObserver {
 
     @FXML
     void logoutClicked(ActionEvent event) throws IOException {
+    	chatService.removeChatObserver(chatObserver);
+    	chatService.updateOnlineUsers();
     	timer.cancel();
 		timer.purge();
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("application.fxml"));
@@ -115,9 +122,11 @@ public class ChatController implements Initializable, ChatObserver {
         chatBox.requestFocus();
     }
     
-    public void initUsername(String pseudo) {
+    public void initUsername(String pseudo) throws RemoteException {
     	username = pseudo;
     	usernameLabel.setText(pseudo);
+    	if (chatService != null)
+			chatService.updateOnlineUsers();
 		Stage stage = (Stage) usernameLabel.getScene().getWindow();
 		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 	          public void handle(WindowEvent we) {
@@ -173,7 +182,6 @@ public class ChatController implements Initializable, ChatObserver {
 	// Load messages when someone sends a message
     @Override
     public boolean refreshMessages(String sender, String receiver, String text) {
-        System.out.println(sender + ": "+ text);
         Text textMessage = new Text(text);
         textMessage.getStyleClass().add("text");
         TextFlow tempFlow = new TextFlow();
@@ -268,14 +276,50 @@ public class ChatController implements Initializable, ChatObserver {
 
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-        String SERVER_IP = "localhost";
-        try {
+		String SERVER_IP = "localhost";
+		try {
 			chatService = (ChatService) Naming.lookup("rmi://" + SERVER_IP + "/list");
 			chatObserver = new ChatObserverImpl(this);
 			chatService.addChatObserver(chatObserver);
+			System.out.println("initialize");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public boolean refreshOnlineUsers(ArrayList<String> onlineUsersList) throws RemoteException {
+		Platform.runLater(() -> usersVBox.getChildren().clear());
+		for (String onlineUser : onlineUsersList) {
+			if(!onlineUser.equals(this.username)) {
+				Text textUsername = new Text(onlineUser);
+//				textUsername.setTextAlignment(TextAlignment.CENTER);
+//				textUsername.setFont(Font.font(20));
+				textUsername.getStyleClass().add("onlineUser");
+				TextFlow flow = new TextFlow();
+				flow.getChildren().add(textUsername);
+				flow.setMaxWidth(180);
+
+				HBox hbox = new HBox();
+
+				usersVBox.setAlignment(Pos.TOP_LEFT);
+				hbox.setAlignment(Pos.CENTER_LEFT);
+				hbox.getChildren().add(flow);
+
+				hbox.getStyleClass().add("hbox");
+				Platform.runLater(() -> usersVBox.getChildren().addAll(hbox));
+			}
+		}
+        return true;
+	}
+
+	@Override
+	public String getUsername() throws RemoteException {
+		return username;
+	}
+
+	public ChatObserver getChatObserver() {
+		return chatObserver;
 	}
 }

@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.201-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ChatController">
    <children>
       <AnchorPane fx:id="contentPane" layoutY="30.0" prefHeight="570.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
@@ -27,7 +26,10 @@
                               </AnchorPane>
                               <AnchorPane prefHeight="510.0" prefWidth="200.0">
                                  <children>
-                                    <ScrollPane layoutX="-35.0" layoutY="74.0" prefHeight="510.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ScrollPane layoutX="-35.0" layoutY="74.0" prefHeight="510.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <content>
+                                          <VBox fx:id="usersVBox" prefHeight="510.0" prefWidth="180.0" />
+                                       </content></ScrollPane>
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="40.0" prefWidth="200.0">

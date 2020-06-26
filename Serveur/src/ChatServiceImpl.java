@@ -173,18 +173,26 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
     
 	@Override
 	public boolean sendTextTo(String sender, String receiver, String text) throws RemoteException {
-		System.out.println("ChatService : sending");
 		return CHAT_OBSERVABLE.sendTextTo(sender, receiver, text);
 	}
 	
 	@Override
 	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
-		System.out.println("ChatService : sending");
 		return CHAT_OBSERVABLE.sendImageTo(sender, receiver, image);
 	}
 
 	@Override
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.addChatObserver(chatObserver);
+	}
+
+	@Override
+	public boolean updateOnlineUsers() throws RemoteException {
+		return CHAT_OBSERVABLE.updateOnlineUsers();
+	}
+
+	@Override
+	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException {
+		return CHAT_OBSERVABLE.removeChatObserver(chatObserver);
 	}
 }

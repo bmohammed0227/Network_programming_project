@@ -1,5 +1,6 @@
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 
@@ -13,13 +14,21 @@ public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserve
 
 	@Override
 	public boolean refreshMessages(String sender, String receiver, String text) throws RemoteException {
-		System.out.println("ChatObserver : sending");
 		return observer.refreshMessages(sender, receiver, text);
 	}
     
 	@Override
 	public boolean refreshImages(String sender, String receiver, ImageIcon image) throws RemoteException {
-		System.out.println("ChatObserver : sending");
 		return observer.refreshImages(sender, receiver, image);
+	}
+
+	@Override
+	public boolean refreshOnlineUsers(ArrayList<String> onlineUsersList) throws RemoteException {
+		return observer.refreshOnlineUsers(onlineUsersList);
+	}
+	
+	@Override
+	public String getUsername() throws RemoteException {
+		return observer.getUsername();
 	}
 }

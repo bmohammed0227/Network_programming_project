@@ -8,4 +8,6 @@ public interface ChatService extends Remote {
 	public boolean sendTextTo(String sender, String receiver, String text) throws RemoteException;
 	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException;
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException;
+	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException;
+	public boolean updateOnlineUsers() throws RemoteException;
 }
