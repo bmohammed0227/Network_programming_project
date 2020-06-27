@@ -58,9 +58,11 @@ public class Controller implements Initializable{
     
     private Timer timer;
     
+	String SERVER_IP = "localhost";
+//	String SERVER_IP = "172.23.139.139";
+
     @FXML
     void handleConfirm(ActionEvent event) throws IOException, NotBoundException {
-		String SERVER_IP = "localhost";
 		chatService = (ChatService) Naming.lookup("rmi://" + SERVER_IP + "/list");
     	ArrayList list = new ArrayList();
     	if(choice) { // Demande d'inscription
@@ -224,7 +226,7 @@ public class Controller implements Initializable{
 	
 	
 	private int send(ArrayList list) throws RemoteException {
-	    String SERVER_IP = "localhost";
+//	    String SERVER_IP = "localhost";
 	    // String SERVER_IP = "172.23.139.139";
 			ChatService stub = null;
 			try {

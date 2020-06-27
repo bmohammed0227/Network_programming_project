@@ -26,13 +26,6 @@ public class ChatObservable {
         return true;
     }
     
-    public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
-    	for (ChatObserver observer : chatObserverList) {
-            observer.refreshFiles(sender, receiver, file);
-        }
-        return true;
-    }
-    
     public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {	
     	return chatObserverList.add(chatObserver);
     }
@@ -52,9 +45,10 @@ public class ChatObservable {
 		return chatObserverList.remove(chatObserver);
 	}
 
-	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData) throws RemoteException, IOException {
+	public boolean sendFileTo(String sender, String receiver, String filename) throws RemoteException {
         for (ChatObserver observer : chatObserverList) {
-            observer.refreshVideos(sender, receiver, filename, remoteFileData);
+        	String text = "["+filename+"]";
+            observer.refreshMessages(sender, receiver, text);
         }
         return true;
 	}

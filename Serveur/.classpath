@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="src" path="/Client"/>
 	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Serveur/src/rmiio-2.1.2.jar"/>
 	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Serveur/src/common-util-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/src/commons-io-2.7.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

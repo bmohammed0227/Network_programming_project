@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,8 +21,12 @@ import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 
+import org.apache.commons.io.IOUtils;
+
 import com.healthmarketscience.rmiio.RemoteInputStream;
 import com.healthmarketscience.rmiio.RemoteInputStreamClient;
+import com.healthmarketscience.rmiio.RemoteOutputStream;
+import com.healthmarketscience.rmiio.RemoteOutputStreamClient;
 
 public class ChatServiceImpl extends UnicastRemoteObject implements ChatService {
 
@@ -187,24 +192,24 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	
 	@Override
 	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
-		new Thread() {
-	            public void run() {
-	            	try {
-	        			File Written_file = new File(file.getName());
-	        			InputStream inputStream = new FileInputStream(file);
-	        			OutputStream outputStream = new FileOutputStream(Written_file);
-	        			int byteRead;
-	        			while ((byteRead = inputStream.read()) != -1) {
-	        					outputStream.write(byteRead);
-	        			}
-	        			inputStream.close();
-	        			outputStream.close();
-	        			CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
-	        		} catch (IOException e) {
-	        			e.printStackTrace();
-	        		}
-	            }
-	        }.start();
+//		new Thread() {
+//	            public void run() {
+//	            	try {
+//	        			File Written_file = new File(file.getName());
+//	        			InputStream inputStream = new FileInputStream(file);
+//	        			OutputStream outputStream = new FileOutputStream(Written_file);
+//	        			int byteRead;
+//	        			while ((byteRead = inputStream.read()) != -1) {
+//	        					outputStream.write(byteRead);
+//	        			}
+//	        			inputStream.close();
+//	        			outputStream.close();
+//	        			CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
+//	        		} catch (IOException e) {
+//	        			e.printStackTrace();
+//	        		}
+//	            }
+//	        }.start();
 	     return true;
 	}
 	
@@ -222,15 +227,54 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.removeChatObserver(chatObserver);
 	}
-
+	
 	@Override
-	public boolean sendVideoTo(String sender, String receiver, String filename, RemoteInputStream remoteFileData)
-			throws RemoteException, IOException {
-		return CHAT_OBSERVABLE.sendVideoTo(sender, receiver, filename, remoteFileData);
-	}
-
-  @Override
-	public File getFile(String name) throws RemoteException {
-		return new File(name);
+	public boolean sendFile(String sender, String receiver, String filename,RemoteInputStream inputFile) throws RemoteException {
+	    InputStream inputStream = null;
+		try {
+			inputStream = RemoteInputStreamClient.wrap(inputFile);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	 
+    	File videoFile = new File(filename);
+		try{
+			OutputStream outputStream = new FileOutputStream(videoFile);
+			IOUtils.copy(inputStream, outputStream);
+		} catch (IOException e) {
+			// handle exception here
+		}
+		System.out.println("Size: "+videoFile.length());
+		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, filename);
+	  }
+	
+	@Override
+	public boolean getFile(RemoteOutputStream outputFile, String filename) throws RemoteException {
+	    OutputStream outputStream = null;
+		try {
+			outputStream = RemoteOutputStreamClient.wrap(outputFile);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	 
+	    File file = new File(filename);
+	    
+	    InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+	    try {
+			IOUtils.copy(inputStream, outputStream);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    return true;
 	}
 }
