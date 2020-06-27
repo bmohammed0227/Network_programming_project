@@ -2,9 +2,9 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/src/rmiio-2.1.2.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/src/common-util-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/src/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/src/commons-io-2.7.jar"/>
+	<classpathentry kind="lib" path="src/common-util-1.1.1.jar"/>
+	<classpathentry kind="lib" path="src/commons-io-2.7.jar"/>
+	<classpathentry kind="lib" path="src/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="src/rmiio-2.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
