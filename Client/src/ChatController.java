@@ -25,6 +25,10 @@ import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
 
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -42,7 +46,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -59,6 +66,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class ChatController implements Initializable, ChatObserver {
 
@@ -155,8 +163,31 @@ public class ChatController implements Initializable, ChatObserver {
 	}
     
     @FXML
-    void sendAudioClicked(ActionEvent event) {
-
+    void sendAudioClicked(ActionEvent event) throws FileNotFoundException, RemoteException {
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle("Selectionez une image pour l'envoyer:");
+    	ExtensionFilter mp3Filter = new ExtensionFilter("Audio MP3 (.mp3)", "*.mp3");
+    	ExtensionFilter wavFilter = new ExtensionFilter("Audio WAV (.wav)", "*.wav");
+    	fileChooser.getExtensionFilters().add(mp3Filter);
+    	fileChooser.getExtensionFilters().add(wavFilter);
+    	File audio = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+    	String audioName = audio.getName();
+    	if (audioName == null)
+		  System.out.println("You cancelled the choice");
+    	else if(audio.length() < 25000000) {
+    		System.out.println("You chose " + audioName);
+    		
+    		FileInputStream inputStream = new FileInputStream(audio);
+    		
+    		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
+    		if(chatService.sendFile(username, receiver2, audioName, remoteFileData)) {
+    			displayAudio(username, receiver2, audio.getAbsolutePath());
+    		}
+    	}
+    	else {
+    		Alert alert = new Alert(AlertType.ERROR, "The audio file "+audioName+" is larger than 250 MB !", ButtonType.OK);
+    		alert.showAndWait();
+    	}
     }
 
     @FXML
@@ -228,7 +259,7 @@ public class ChatController implements Initializable, ChatObserver {
     		}
     	}
     	else {
-    		Alert alert = new Alert(AlertType.ERROR, "The image "+videoName+" is larger than 250 MB !", ButtonType.OK);
+    		Alert alert = new Alert(AlertType.ERROR, "The video "+videoName+" is larger than 250 MB !", ButtonType.OK);
     		alert.showAndWait();
     	}
     }
@@ -251,7 +282,8 @@ public class ChatController implements Initializable, ChatObserver {
 						displayVideo(sender, receiver, filename);
 	    		}
 	    		else if (filename.endsWith(".mp3") || filename.endsWith(".wav"))
-	    			displayVideo(sender, receiver, filename);
+	    			if (!username.equals(sender))
+						displayAudio(sender, receiver, filename);
 	    		else 
 	    			if (!username.equals(sender))
 						displayFile(sender, receiver, filename);
@@ -298,6 +330,104 @@ public class ChatController implements Initializable, ChatObserver {
     	return true;
     }
     
+	private boolean displayAudio(String sender, String receiver3, String filename) {
+		if(receiver3.equals(username) || sender.equals(username)) {
+			System.out.println("displayVideo");
+			System.out.println(sender + " has sent a video");
+			TextFlow tempFlow = new TextFlow();
+			if(!username.equals(sender)) {
+				Text textName = new Text(sender +": ");
+				textName.getStyleClass().add("textName");
+				tempFlow.getChildren().add(textName);
+			}
+			
+			TextFlow flow = new TextFlow(tempFlow);
+			
+			HBox hbox = new HBox();
+			Image pauseButtonImage = new Image("file:res/pause-circle-fill.png");
+			Image playButtonImage = new Image("file:res/play-circle-fill.png");
+			ImageView imagePlayPause = new ImageView(playButtonImage);
+			javafx.scene.control.Slider slider = new Slider();
+			slider.setMinSize(300, 24);
+			
+			Task<Boolean> task = new Task<Boolean>() {
+				public Boolean call() {
+					try {
+						if (!username.equals(sender))
+							getFile(filename);
+						return true;
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+						return false;
+					}
+				}
+			};
+			task.setOnSucceeded(e -> {
+				Boolean result = task.getValue();
+				if (result) {
+					Media audio = null;
+					if(!username.equals(sender))
+						audio = new Media(new File(username+"-"+filename).toURI().toString());
+					else
+						audio = new Media(new File(filename).toURI().toString());
+					MediaPlayer mediaPlayer = new MediaPlayer(audio);
+
+				    mediaPlayer.currentTimeProperty().addListener((ObservableValue<? extends Duration> observable, Duration oldValue, Duration newValue) -> {
+				        slider.setValue(newValue.toSeconds());
+				    });
+				    slider.setOnMouseClicked((MouseEvent mouseEvent) -> {
+				        mediaPlayer.seek(Duration.seconds(slider.getValue()));
+				    });	
+					mediaPlayer.setOnEndOfMedia(new Runnable() {
+						@Override
+						public void run() {
+							mediaPlayer.stop();
+							imagePlayPause.setImage(playButtonImage);
+						}
+					});
+					imagePlayPause.setOnMouseClicked(event -> {
+						if(mediaPlayer.getStatus().equals(Status.PLAYING)) {
+							mediaPlayer.pause();
+							imagePlayPause.setImage(playButtonImage);
+						}
+						else {
+							mediaPlayer.play();
+							slider.maxProperty().bind(Bindings.createDoubleBinding(() -> mediaPlayer.getTotalDuration().toSeconds(), mediaPlayer.totalDurationProperty()));
+							imagePlayPause.setImage(pauseButtonImage);
+						}
+					});
+					System.out.println("Playing video");
+				}
+			});
+			new Thread(task).start();
+	
+			if (!username.equals(sender)) {
+				chatVBox = listChat.get(sender);
+				tempFlow.getStyleClass().add("tempFlowFlipped");
+				flow.getStyleClass().add("textFlowFlipped");
+				chatVBox.setAlignment(Pos.TOP_LEFT);
+				hbox.setAlignment(Pos.CENTER_LEFT);
+				hbox.getChildren().add(flow);
+				hbox.getChildren().add(imagePlayPause);
+				hbox.getChildren().add(slider);
+			}
+			else {
+				chatVBox = listChat.get(receiver2);
+				tempFlow.getStyleClass().add("tempFlow");
+				flow.getStyleClass().add("textFlow");
+				hbox.setAlignment(Pos.BOTTOM_RIGHT);
+				hbox.getChildren().add(flow);
+				hbox.getChildren().add(imagePlayPause);
+				hbox.getChildren().add(slider);
+			}
+			
+			hbox.getStyleClass().add("hbox");
+			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
+		}
+		return true;
+	}
+
 	private boolean displayFile(String sender, String receiver3, String filename) {
 		if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("DisplayFile");
@@ -613,7 +743,7 @@ public class ChatController implements Initializable, ChatObserver {
 				Text textUsername = new Text(onlineUser);
 				listT.add(textUsername);
 				if(listChat.get(onlineUser)==null) { // Si un autre utilisateur vient de se connecter
-					VBox v = new VBox(); // on creer le vbox associé a lui
+					VBox v = new VBox(); // on creer le vbox associï¿½ a lui
 					v.setPrefHeight(440);
 					v.setPrefWidth(470);
 					listChat.put(onlineUser, v); // on l'ajoute a la liste
@@ -649,9 +779,9 @@ public class ChatController implements Initializable, ChatObserver {
 					   chatBox.setDisable(false);
 					   receiver2 = user; // on affecte le receiver pour l'envoie des messages
 						Platform.runLater(()->{
-							System.out.println("L'utilisateur selectionné : "+user);
+							System.out.println("L'utilisateur selectionnï¿½ : "+user);
 							chatAnchorPane.getChildren().clear(); // on efface l'ancienne fenetre
-							chatAnchorPane.getChildren().setAll(listChat.get(user)); // on ajoute la fenetre selectionné
+							chatAnchorPane.getChildren().setAll(listChat.get(user)); // on ajoute la fenetre selectionnï¿½
 						});
 				   } 
 				};  
