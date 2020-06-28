@@ -78,7 +78,7 @@ public class ChatController implements Initializable, ChatObserver {
 	HashMap<String, VBox> listChat = new HashMap<>();
 	ArrayList<Text> listT = new ArrayList<>();
 	HashMap<String, EventHandler<MouseEvent>> hashMapEvent = new HashMap<>();
-	private EventHandler<MouseEvent> myHandler;
+	private Stage stageCreatController;
 //	String SERVER_IP = "172.23.139.139";
 		
     @FXML
@@ -89,7 +89,10 @@ public class ChatController implements Initializable, ChatObserver {
 
     @FXML
     private Button buttonLogout;
-
+    
+    @FXML
+    private Button buttonCreateGroup;
+    
     @FXML
     private AnchorPane chatAnchorPane = new AnchorPane();
 
@@ -106,21 +109,33 @@ public class ChatController implements Initializable, ChatObserver {
     private AnchorPane titleBar;
 
     @FXML
-    private Button buttonClose;
-    
-    @FXML
     private VBox chatVBox;
     
     @FXML
     private VBox usersVBox;
     
 	private Timer timer;
-
-    @FXML
-    void closeClicked(ActionEvent event) {
-    	
+	
+	private void closeWindowEvent(WindowEvent event) throws IOException {
+		logoutClicked(null);
+        System.exit(0);
     }
-
+   
+	@FXML
+    void handleCreateGroup(ActionEvent event) throws IOException {
+    	FXMLLoader loader = new FXMLLoader(getClass().getResource("creatGroupWindow.fxml"));
+ 	    Parent root = (Parent)loader.load();
+ 		Scene scene = new Scene(root);
+ 		stageCreatController= new Stage();
+ 		stageCreatController.setScene(scene);
+ 		stageCreatController.setResizable(false);
+ 		stageCreatController.setTitle("Création d'un groupe");
+ 		creatGroupController groupController = loader.getController();
+ 		groupController.setOnlineUsers(new ArrayList<String>(listChat.keySet()));
+ 		groupController.setUsername(username);
+ 		stageCreatController.show();
+    }
+	
     @FXML
     void logoutClicked(ActionEvent event) throws IOException {
     	chatService.removeChatObserver(chatObserver);
@@ -144,7 +159,30 @@ public class ChatController implements Initializable, ChatObserver {
     	if(textMessage.equals(""))
     		return;
         String receiver = receiver2;
-        chatService.sendTextTo(username, receiver, textMessage);
+        if(receiver.charAt(0) != '#') {
+        	chatService.sendTextTo(username, receiver, textMessage);
+        }else{
+        	//Envoie groupe
+        	chatService.sendTextToGroup(username, receiver, textMessage);
+        }
+        
+        // on l'affiche directement sans l'envoyer et le recevoir
+        Text TtextMessage = new Text(textMessage);
+		TtextMessage.getStyleClass().add("text");
+		TextFlow tempFlow = new TextFlow();
+		tempFlow.getChildren().add(TtextMessage);
+		tempFlow.setMaxWidth(350);
+		TextFlow flow = new TextFlow(tempFlow);
+		HBox hbox = new HBox();
+		tempFlow.getStyleClass().add("tempFlow");
+		flow.getStyleClass().add("textFlow");
+		hbox.setAlignment(Pos.BOTTOM_RIGHT);
+		hbox.getChildren().add(flow);
+		hbox.getStyleClass().add("hbox");
+		chatVBox = listChat.get(receiver2);
+		Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
+        
+        
         chatBox.setText("");
         chatBox.requestFocus();
     }
@@ -155,11 +193,13 @@ public class ChatController implements Initializable, ChatObserver {
     	if (chatService != null)
 			chatService.updateOnlineUsers();
 		Stage stage = (Stage) usernameLabel.getScene().getWindow();
-		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-	          public void handle(WindowEvent we) {
-	              System.exit(0);
-	          }
-	      }); 
+		stage.getScene().getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, arg0 -> {
+			try {
+				closeWindowEvent(arg0);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
 	}
     
     @FXML
@@ -271,30 +311,38 @@ public class ChatController implements Initializable, ChatObserver {
 	
 	// Load messages when someone sends a message
     @Override
-    public boolean refreshMessages(String sender, String receiver, String text) {
-    	if(receiver.equals(username) || sender.equals(username)) {
-	    	if (text.startsWith("[") && text.endsWith("]")) {
-	    		String filename = text.substring(1, text.length()-1);
-	    		if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg"))
-	    			displayImage(sender, receiver, filename);
-	    		else if (filename.endsWith(".mp4")) {
-	    			if (!username.equals(sender)) {
+	public boolean refreshMessages(String sender, String receiver, String text) {
+    	String groupName=null;
+    	boolean toGroup = false;
+    	if(sender.charAt(0)=='#') {
+    		groupName = "#"+sender.split("#")[1];
+    		sender = sender.split("#")[2];
+    		toGroup = true;
+    	}
+	    //if(!toGroup || (toGroup&&!sender.equals(receiver))) {
+	   	if(receiver.equals(username)) {
+		   	if (text.startsWith("[") && text.endsWith("]")) {
+		    	String filename = text.substring(1, text.length()-1);
+		    	if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg"))
+		    		displayImage(sender, receiver, filename);
+		    	else if (filename.endsWith(".mp4")) {
+		    		if (!username.equals(sender)) {
 						displayVideo(sender, receiver, filename);
-	    			}
-	    		}
-	    		else if (filename.endsWith(".mp3") || filename.endsWith(".wav")) {
-	    			if (!username.equals(sender)) {
+		    		}
+		    	}
+		    	else if (filename.endsWith(".mp3") || filename.endsWith(".wav")) {
+		    		if (!username.equals(sender)) {
 						displayAudio(sender, receiver, filename);
-	    			}
-	    		}
-	    		else {
-	    			if (!username.equals(sender)) {
+		    		}
+		    	}
+		    	else {
+		    		if (!username.equals(sender)) {
 						displayFile(sender, receiver, filename);
-	    			}
-	    		}
-	    		return true;
-	    	}
-	    	else {
+		    		}
+		    	}
+		    	return true;
+		    }
+		    else {
 				Text textMessage = new Text(text);
 				textMessage.getStyleClass().add("text");
 				TextFlow tempFlow = new TextFlow();
@@ -306,13 +354,14 @@ public class ChatController implements Initializable, ChatObserver {
 				
 				tempFlow.getChildren().add(textMessage);
 				tempFlow.setMaxWidth(350);
-				
+					
 				TextFlow flow = new TextFlow(tempFlow);
 				
 				HBox hbox = new HBox();
 				
 				if (!username.equals(sender)) {
-					chatVBox = listChat.get(sender);
+					if(!toGroup) chatVBox = listChat.get(sender);
+						else chatVBox = listChat.get(groupName);
 					tempFlow.getStyleClass().add("tempFlowFlipped");
 					flow.getStyleClass().add("textFlowFlipped");
 					chatVBox.setAlignment(Pos.TOP_LEFT);
@@ -320,7 +369,8 @@ public class ChatController implements Initializable, ChatObserver {
 					hbox.getChildren().add(flow);
 				}
 				else {
-					chatVBox = listChat.get(receiver2);
+					if(!toGroup) chatVBox = listChat.get(receiver2);
+    				else chatVBox = listChat.get(groupName);
 					tempFlow.getStyleClass().add("tempFlow");
 					flow.getStyleClass().add("textFlow");
 					hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -329,9 +379,8 @@ public class ChatController implements Initializable, ChatObserver {
 				
 				hbox.getStyleClass().add("hbox");
 				Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
-	    	}
-			
-    	}
+		    }	
+	    }
     	return true;
     }
     

@@ -265,16 +265,28 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 		try {
 			inputStream = new FileInputStream(file);
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	    try {
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	    
 	    return true;
+	}
+
+	@Override
+	public void addGroup(Group group) throws RemoteException {
+		CHAT_OBSERVABLE.add(group);
+	}
+
+	@Override
+	public void sendTextToGroup(String username, String receiver, String textMessage) throws RemoteException {
+		Group group = CHAT_OBSERVABLE.getGroup(receiver);
+		for(String participant:group.getParticipants()) {
+			if(!username.equals(participant))
+				sendTextTo("#"+group.getName()+"#"+username, participant, textMessage);
+		}
 	}
 }
