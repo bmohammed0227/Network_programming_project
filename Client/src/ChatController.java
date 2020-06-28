@@ -278,15 +278,20 @@ public class ChatController implements Initializable, ChatObserver {
 	    		if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg"))
 	    			displayImage(sender, receiver, filename);
 	    		else if (filename.endsWith(".mp4")) {
-	    			if (!username.equals(sender))
+	    			if (!username.equals(sender)) {
 						displayVideo(sender, receiver, filename);
+	    			}
 	    		}
-	    		else if (filename.endsWith(".mp3") || filename.endsWith(".wav"))
-	    			if (!username.equals(sender))
+	    		else if (filename.endsWith(".mp3") || filename.endsWith(".wav")) {
+	    			if (!username.equals(sender)) {
 						displayAudio(sender, receiver, filename);
-	    		else 
-	    			if (!username.equals(sender))
+	    			}
+	    		}
+	    		else {
+	    			if (!username.equals(sender)) {
 						displayFile(sender, receiver, filename);
+	    			}
+	    		}
 	    		return true;
 	    	}
 	    	else {
