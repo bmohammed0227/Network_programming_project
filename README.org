@@ -1,7 +1,7 @@
 #+title:Network Programming Project
 #+description: Le but de ce projet est de programmer une application réseau distribuée qui permet à un ensemble des utilisateurs connecter à un réseau LAN (filaire ou Wifi) de communiquer entre eux en utilisant les différents types de communication (message, voix et vidéo) et de partager des fichiers.
 
-* TODO [0/8] Tasks
+* TODO [8/8] Tasks
 
   1) [X] Creer la scene de connexion
     #+begin_quote
@@ -40,7 +40,7 @@
     Le fichier aura une limite de taille qui sera defini pendent la realisation
     #+end_quote
 
-* TODO [0/1] Secondary Tasks
+* TODO [0/4] Secondary Tasks
 
   1) [ ] Permettre au utilisateurs d'avoir une photo de profil
   2) [ ] Ajouter un mot de passe a la base de données
