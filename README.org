@@ -1,41 +1,41 @@
 #+title:Network Programming Project
-#+description: Le but de ce projet est de programmer une application rÈseau distribuÈe qui permet ‡ un ensemble des utilisateurs connecter ‡ un rÈseau LAN (filaire ou Wifi) de communiquer entre eux en utilisant les diffÈrents types de communication (message, voix et vidÈo) et de partager des fichiers.
+#+description: Le but de ce projet est de programmer une application r√©seau distribu√©e qui permet √† un ensemble des utilisateurs connecter √† un r√©seau LAN (filaire ou Wifi) de communiquer entre eux en utilisant les diff√©rents types de communication (message, voix et vid√©o) et de partager des fichiers.
 
 * TODO [0/8] Tasks
 
-  1) [ ] Creer la scene de connexion
+  1) [X] Creer la scene de connexion
     #+begin_quote
     Il y aura deux champs username et password, et de bouttons "Connecter" "S'inscrire" si le boutton s'inscrire est cliquee il y aura 5 champs les champs supplementaires seront le nom le prenm est la confirmation du password
     #+end_quote
-  2) [ ] Creer la base de donnees au niveau du serveur
+  2) [X] Creer la base de donnees au niveau du serveur
     #+begin_quote
     La clee primaire serai le username de l'utilisateur
     #+end_quote
-  3) [ ] Creer la scene des messages
+  3) [X] Creer la scene des messages
     #+begin_quote
     Elle sera divisee en 3, une frame pour voir les clients connectee et aussi les groups et la deuxieme elle aura des informations sur le destinataire, et la troisieme aura les messages
     #+end_quote
-  3) [ ] Gerer l'ajout d'un group d'utilisateur a une conversations
+  3) [X] Gerer l'ajout d'un group d'utilisateur a une conversations
     #+begin_quote
     Elle sera divisee en 3, une frame pour voir les clients connectee et aussi les groups et la deuxieme elle aura des informations sur le destinataire, et la troisieme aura les messages
     #+end_quote
-  4) [ ] Gerer l'envoi des messages text
+  4) [X] Gerer l'envoi des messages text
     #+begin_quote
     Le messages aura une limite qui sera defini pendent la realisation 
     #+end_quote
-  5) [ ] Gerer l'envoi des images
+  5) [X] Gerer l'envoi des images
     #+begin_quote
     L'image est limite a une resolution ou une taille qui sera defini pendent la realisation
     #+end_quote
-  6) [ ] Gerer l'envoi des messages audio
+  6) [X] Gerer l'envoi des messages audio
     #+begin_quote
     Le message vocale sera limite par une duree qui sera defini pendent la realisation 
     #+end_quote
-  7) [ ] Gerer l'envoi des videos
+  7) [X] Gerer l'envoi des videos
     #+begin_quote
     La video ne doit pas depasser une duree ou taille qui sera defini pendent la realisation
     #+end_quote
-  8) [ ] Gerer l'envoi des fichiers
+  8) [X] Gerer l'envoi des fichiers
     #+begin_quote
     Le fichier aura une limite de taille qui sera defini pendent la realisation
     #+end_quote
@@ -43,13 +43,16 @@
 * TODO [0/1] Secondary Tasks
 
   1) [ ] Permettre au utilisateurs d'avoir une photo de profil
+  2) [ ] Ajouter un mot de passe a la base de donn√©es
+  3) [ ] R√©gler le probl√®me d'√©crasement de fichiers avec le meme nom (lui ajouter la date par exemple)
+  4) [ ] Afficher les infos des clients connect√©s a gauche
 
 * Objectives
 
 ** [0/2] Etape 1 
   
-   1) [ ] DÈtection automatique de tous les utilisateurs connectÈs au rÈseau.
-   2) [ ] Un utilisateur peut sÈlectionner un destinataire parmi les utilisateurs connectÈs ou un groupe de destinataires et leur envoyer un message ou un fichier comme piËce jointe.
+   1) [X] D√©tection automatique de tous les utilisateurs connect√©s au r√©seau.
+   2) [X] Un utilisateur peut s√©lectionner un destinataire parmi les utilisateurs connect√©s ou un groupe de destinataires et leur envoyer un message ou un fichier comme pi√®ce jointe.
 
 ** [0/1] Etape 2
-   1) [ ] Un utilisateur peut sÈlectionner un destinataire ou un groupe de destinataires et dialoguer avec eux avec la possibilitÈ de voir ses interlocuteurs
+   1) [ ] Un utilisateur peut s√©lectionner un destinataire ou un groupe de destinataires et dialoguer avec eux avec la possibilit√© de voir ses interlocuteurs
