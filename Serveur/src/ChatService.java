@@ -10,9 +10,7 @@ import com.healthmarketscience.rmiio.RemoteOutputStream;
 public interface ChatService extends Remote {
 	public int sent(ArrayList list) throws RemoteException;
 	public boolean sendTextTo(String sender, String receiver, String text) throws RemoteException;
-	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException;
 	public boolean sendFile(String sender, String receiver, String filename,RemoteInputStream inputFile) throws RemoteException;
-	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException;
 	public boolean getFile(RemoteOutputStream remoteOutputStream, String filename) throws RemoteException;
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException;
 	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException;

@@ -19,13 +19,6 @@ public class ChatObservable {
         return true;
     }
 
-    public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
-        for (ChatObserver observer : chatObserverList) {
-            observer.refreshImages(sender, receiver, image);
-        }
-        return true;
-    }
-    
     public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {	
     	return chatObserverList.add(chatObserver);
     }

@@ -21,11 +21,6 @@ public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserve
 	}
     
 	@Override
-	public boolean refreshImages(String sender, String receiver, ImageIcon image) throws RemoteException {
-		return observer.refreshImages(sender, receiver, image);
-	}
-
-	@Override
 	public boolean refreshOnlineUsers(ArrayList<String> onlineUsersList) throws RemoteException {
 		return observer.refreshOnlineUsers(onlineUsersList);
 	}

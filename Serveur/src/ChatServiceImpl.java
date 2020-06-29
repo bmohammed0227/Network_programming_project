@@ -186,34 +186,6 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	}
 	
 	@Override
-	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
-		return CHAT_OBSERVABLE.sendImageTo(sender, receiver, image);
-	}
-	
-	@Override
-	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
-//		new Thread() {
-//	            public void run() {
-//	            	try {
-//	        			File Written_file = new File(file.getName());
-//	        			InputStream inputStream = new FileInputStream(file);
-//	        			OutputStream outputStream = new FileOutputStream(Written_file);
-//	        			int byteRead;
-//	        			while ((byteRead = inputStream.read()) != -1) {
-//	        					outputStream.write(byteRead);
-//	        			}
-//	        			inputStream.close();
-//	        			outputStream.close();
-//	        			CHAT_OBSERVABLE.sendFileTo(sender, receiver, file);
-//	        		} catch (IOException e) {
-//	        			e.printStackTrace();
-//	        		}
-//	            }
-//	        }.start();
-	     return true;
-	}
-	
-	@Override
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.addChatObserver(chatObserver);
 	}
@@ -239,11 +211,20 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 		}
 	 
     	File videoFile = new File(filename);
+    	OutputStream outputStream = null;
 		try{
-			OutputStream outputStream = new FileOutputStream(videoFile);
+			outputStream = new FileOutputStream(videoFile);
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			// handle exception here
+		}
+		finally {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Size: "+videoFile.length());
 		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, filename);

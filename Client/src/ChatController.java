@@ -18,7 +18,13 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.swing.ImageIcon;
+
+import org.im4java.core.ConvertCmd;
+import org.im4java.core.IM4JavaException;
+import org.im4java.core.IMOperation;
+import org.im4java.utils.FilenameLoader;
 
 import com.healthmarketscience.rmiio.RemoteOutputStreamServer;
 import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
@@ -225,11 +231,42 @@ public class ChatController implements Initializable, ChatObserver {
     	fileChooser.getExtensionFilters().add(jpgFilter);
     	File image = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
     	String imageName = image.getName();
-    	if (imageName == null)
+    	
+    	File outputImage = null;
+    	String outputImageName = null;
+
+    	if (imageName.endsWith("png")) {
+			IMOperation op = new IMOperation();
+			op.addImage(image.getAbsolutePath());
+			outputImageName = imageName.substring(0, imageName.lastIndexOf('.') -1) +".jpg" ;
+			outputImage = new File(outputImageName);
+			outputImage.createNewFile();
+			op.addImage(outputImage.getName());
+			ConvertCmd convert = new ConvertCmd();
+			try {
+				convert.run(op);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IM4JavaException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+    	}
+    	else {
+    		outputImage = image;
+    		outputImageName = outputImage.getName();
+    	}
+    	if (outputImageName == null)
   		  System.out.println("You cancelled the choice");
       	else if(image.length() < 25000000) {
       		System.out.println("You chose " + imageName);
-  			chatService.sendImageTo(username, receiver2, new ImageIcon(image.getAbsolutePath()));
+    		FileInputStream inputStream = new FileInputStream(outputImage);
+    		
+    		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
+    		if(chatService.sendFile(username, receiver2, outputImageName, remoteFileData)) {
+    			displayImage(username, receiver2, outputImage.getAbsolutePath());
+    		}
       	}
       	else {
       		Alert alert = new Alert(AlertType.ERROR, "The image "+imageName+" is larger than 25 MB !", ButtonType.OK);
@@ -275,8 +312,11 @@ public class ChatController implements Initializable, ChatObserver {
     	if(receiver.equals(username) || sender.equals(username)) {
 	    	if (text.startsWith("[") && text.endsWith("]")) {
 	    		String filename = text.substring(1, text.length()-1);
-	    		if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg"))
-	    			displayImage(sender, receiver, filename);
+	    		if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg")) {
+	    			if (!username.equals(sender)) {
+						displayImage(sender, receiver, filename);
+	    			}
+	    		}
 	    		else if (filename.endsWith(".mp4")) {
 	    			if (!username.equals(sender)) {
 						displayVideo(sender, receiver, filename);
@@ -594,12 +634,11 @@ public class ChatController implements Initializable, ChatObserver {
 		return true;
 	}
 
-	private boolean displayImage(String sender, String receiver3, String image) {
+	private boolean displayImage(String sender, String receiver3, String filename) {
 		if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("displayImages");
 			try {
-				if(new File(image).isFile() || getFile(image)) {
-					File imageFile = new File(image);
+				if(new File(filename).isFile() || getFile(filename)) {
 					System.out.println(sender + " has sent an image");
 					TextFlow tempFlow = new TextFlow();
 					if(!username.equals(sender)) {
@@ -612,25 +651,66 @@ public class ChatController implements Initializable, ChatObserver {
 					
 					HBox hbox = new HBox();
 					Rectangle rectangle = new Rectangle();
-					BufferedImage tempBufferedImage = ImageIO.read(imageFile);
-					// Create a buffered image with transparency
-					BufferedImage bufferedImage = new BufferedImage (tempBufferedImage.getWidth(), tempBufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB); 
-					if(bufferedImage.getWidth() > 300) {
-						rectangle.setWidth(300);
-						rectangle.setHeight(bufferedImage.getHeight() * 300 / bufferedImage.getWidth());
-					}
-					else {
-						rectangle.setWidth(bufferedImage.getWidth());
-						rectangle.setHeight(bufferedImage.getHeight());
-					}
-					rectangle.getStyleClass().add("imageView");
 	
-					// Draw the image on to the buffered image
-					Graphics2D bGr = bufferedImage.createGraphics();
-					bGr.drawImage(tempBufferedImage, 0, 0, null);
-					bGr.dispose();
-	
-					rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(bufferedImage, null)));
+					Task<Boolean> task = new Task<Boolean>() {
+						public Boolean call() {
+							try {
+								if (!username.equals(sender))
+									getFile(filename);
+								return true;
+							} catch (RemoteException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+								return false;
+							}
+						}
+					};
+					task.setOnSucceeded(e -> {
+						Boolean result = task.getValue();
+						if (result) {
+							BufferedImage bufferedImage = null;
+							if(!username.equals(sender))
+								try {
+									File imageFile = new File(username+"-"+filename);
+									System.out.println(imageFile.getAbsolutePath());
+									bufferedImage = ImageIO.read(imageFile.getAbsoluteFile());
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							else
+								try {
+									System.out.println(new File(filename).toString());
+									bufferedImage = ImageIO.read(new File(filename));
+								} catch (IOException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							// Create a buffered image with transparency
+							BufferedImage newBufferedImage = null;
+							if (bufferedImage != null) {
+								newBufferedImage = new BufferedImage (bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB); 
+								if(newBufferedImage.getWidth() > 350) {
+									rectangle.setWidth(350);
+									rectangle.setHeight(newBufferedImage.getHeight() * 350 / newBufferedImage.getWidth());
+								}
+								else {
+									rectangle.setWidth(newBufferedImage.getWidth());
+									rectangle.setHeight(newBufferedImage.getHeight());
+								}
+								rectangle.getStyleClass().add("imageView");
+				
+								// Draw the image on to the buffered image
+								Graphics2D bGr = newBufferedImage.createGraphics();
+								bGr.drawImage(bufferedImage, 0, 0, null);
+								bGr.dispose();
+								rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(newBufferedImage, null)));
+							}
+							else 
+								System.out.println("Couldn't load the image");
+						}
+					});
+					new Thread(task).start();
 					if (!username.equals(sender)) {
 						chatVBox = listChat.get(sender);
 						tempFlow.getStyleClass().add("tempFlowFlipped");
@@ -658,67 +738,8 @@ public class ChatController implements Initializable, ChatObserver {
 				e.printStackTrace();
 			}
 		}
-		return false;
+		return false;	
 	}
-
-// Load messages when someone sends a message
-    @Override
-    public boolean refreshImages(String sender, String receiver, ImageIcon image) {
-    	if(receiver.equals(username) || sender.equals(username)) {
-	    	System.out.println(sender + " has sent an image");
-	        TextFlow tempFlow = new TextFlow();
-	        if(!username.equals(sender)) {
-	        	Text textName = new Text(sender +": ");
-	        	textName.getStyleClass().add("textName");
-	        	tempFlow.getChildren().add(textName);
-	        }
-	        
-	        TextFlow flow = new TextFlow(tempFlow);
-	        
-	        HBox hbox = new HBox();
-	        Rectangle rectangle = new Rectangle();
-	        if(image.getIconWidth() > 300) {
-	        	rectangle.setWidth(300);
-	        	rectangle.setHeight(image.getIconHeight() * 300 / image.getIconWidth());
-	        }
-	        else {
-	        	rectangle.setWidth(image.getIconWidth());
-				rectangle.setHeight(image.getIconHeight());
-	        }
-	        rectangle.getStyleClass().add("imageView");
-	
-	        // Create a buffered image with transparency
-	        BufferedImage bufferedImage = new BufferedImage(image.getIconWidth(), image.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
-	
-	        // Draw the image on to the buffered image
-	        Graphics2D bGr = bufferedImage.createGraphics();
-	        bGr.drawImage(image.getImage(), 0, 0, null);
-	        bGr.dispose();
-	
-	        rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(bufferedImage, null)));
-	        if (!username.equals(sender)) {
-	        	chatVBox = listChat.get(sender);
-	        	tempFlow.getStyleClass().add("tempFlowFlipped");
-	        	flow.getStyleClass().add("textFlowFlipped");
-	        	chatVBox.setAlignment(Pos.TOP_LEFT);
-	        	hbox.setAlignment(Pos.CENTER_LEFT);
-	        	hbox.getChildren().add(flow);
-	        	hbox.getChildren().add(rectangle);
-	        }
-	        else {
-	        	chatVBox = listChat.get(receiver2);
-	        	tempFlow.getStyleClass().add("tempFlow");
-	        	flow.getStyleClass().add("textFlow");
-	        	hbox.setAlignment(Pos.BOTTOM_RIGHT);
-	        	hbox.getChildren().add(flow);
-	        	hbox.getChildren().add(rectangle);
-	        }
-	        
-	        hbox.getStyleClass().add("hbox");
-	        Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
-    	}
-        return true;
-    }
 
     @Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
