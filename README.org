@@ -49,7 +49,7 @@
 
 * Objectives
 
-** [0/2] Etape 1 
+** [2/2] Etape 1 
   
    1) [X] Détection automatique de tous les utilisateurs connectés au réseau.
    2) [X] Un utilisateur peut sélectionner un destinataire parmi les utilisateurs connectés ou un groupe de destinataires et leur envoyer un message ou un fichier comme pièce jointe.
