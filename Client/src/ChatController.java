@@ -151,7 +151,8 @@ public class ChatController implements Initializable, ChatObserver {
 		stage.setTitle("Application de communication");
 		stage.show();
     }
-
+    
+    
 	// Send a message if it's not empty
     @FXML
     void sendMessageClicked(ActionEvent event) throws RemoteException {
@@ -159,6 +160,7 @@ public class ChatController implements Initializable, ChatObserver {
     	if(textMessage.equals(""))
     		return;
         String receiver = receiver2;
+        
         if(receiver.charAt(0) != '#') {
         	chatService.sendTextTo(username, receiver, textMessage);
         }else{
@@ -188,6 +190,7 @@ public class ChatController implements Initializable, ChatObserver {
     }
     
     public void initUsername(String pseudo) throws RemoteException {
+    	System.out.println("PSEUDO:["+pseudo+"]");
     	username = pseudo;
     	usernameLabel.setText(pseudo);
     	if (chatService != null)
@@ -220,9 +223,19 @@ public class ChatController implements Initializable, ChatObserver {
     		FileInputStream inputStream = new FileInputStream(audio);
     		
     		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
-    		if(chatService.sendFile(username, receiver2, audioName, remoteFileData)) {
-    			displayAudio(username, receiver2, audio.getAbsolutePath());
-    		}
+    		
+    		
+    		if(receiver2.charAt(0) != '#') {
+    			if(chatService.sendFile(username, receiver2, audioName, remoteFileData)) {
+        			displayAudio(username, receiver2, audio.getAbsolutePath());
+        		}
+	        }else{
+	        	//Envoie groupe
+	        	if(chatService.sendFileToGroup(username, receiver2, audioName, remoteFileData)) {
+	    			displayAudio(username, receiver2, audio.getAbsolutePath());
+	    		}
+	        }
+    		
     	}
     	else {
     		Alert alert = new Alert(AlertType.ERROR, "The audio file "+audioName+" is larger than 250 MB !", ButtonType.OK);
@@ -242,9 +255,18 @@ public class ChatController implements Initializable, ChatObserver {
 				FileInputStream inputStream = new FileInputStream(file);
 				
 				SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
-				if(chatService.sendFile(username, receiver2, fileName, remoteFileData)) {
-					displayFile(username, receiver2, file.getAbsolutePath());
-				}
+				
+				if(receiver2.charAt(0) != '#') {
+					if(chatService.sendFile(username, receiver2, fileName, remoteFileData)) {
+						displayFile(username, receiver2, file.getAbsolutePath());
+					}
+		        }else{
+		        	//Envoie groupe
+		        	if(chatService.sendFileToGroup(username, receiver2, fileName, remoteFileData)) {
+		        		displayFile(username, receiver2, file.getAbsolutePath());
+					}
+		        }
+				
 			}
 			else {
 				Alert alert = new Alert(AlertType.ERROR, "The file "+file.getName()+" is larger than 25 MB !", ButtonType.OK);
@@ -252,7 +274,6 @@ public class ChatController implements Initializable, ChatObserver {
 			}
 	    }
     }
-
     @FXML
     void sendImageClicked(ActionEvent event) throws RemoteException, IOException {
     	FileChooser fileChooser = new FileChooser();
@@ -265,17 +286,63 @@ public class ChatController implements Initializable, ChatObserver {
     	fileChooser.getExtensionFilters().add(jpgFilter);
     	File image = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
     	String imageName = image.getName();
+    	ImageIcon image2 = null;
     	if (imageName == null)
   		  System.out.println("You cancelled the choice");
       	else if(image.length() < 25000000) {
       		System.out.println("You chose " + imageName);
-  			chatService.sendImageTo(username, receiver2, new ImageIcon(image.getAbsolutePath()));
+      		image2 = new ImageIcon(image.getAbsolutePath());
+  			if(receiver2.charAt(0) != '#') {
+  				chatService.sendImageTo(username, receiver2, image2);
+  	        }else{
+  	        	System.out.println("username :"+username);
+  	        	System.out.println("receiver2:"+receiver2);
+  	        	//Envoie groupe
+  	        	chatService.sendImageToGroup(username, receiver2, image2);
+  	        }
       	}
       	else {
       		Alert alert = new Alert(AlertType.ERROR, "The image "+imageName+" is larger than 25 MB !", ButtonType.OK);
       		alert.showAndWait();
-      	}    }
+      	}    
+    	
+    	
+    	// affichage de l'image directement sans l'envoyer puis le recevoir
+    	TextFlow tempFlow = new TextFlow();
+    	TextFlow flow = new TextFlow(tempFlow);
+    	 HBox hbox = new HBox();
+	     Rectangle rectangle = new Rectangle();
+	     if(image2.getIconWidth() > 300) {
+	        rectangle.setWidth(300);
+	        rectangle.setHeight(image2.getIconHeight() * 300 / image2.getIconWidth());
+	     }
+	     else {
+	    	 rectangle.setWidth(image2.getIconWidth());
+	    	 rectangle.setHeight(image2.getIconHeight());
+	        }
+	     rectangle.getStyleClass().add("imageView");
+	     // Create a buffered image with transparency
+	     BufferedImage bufferedImage = new BufferedImage(image2.getIconWidth(), image2.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+	     // Draw the image on to the buffered image
+	     Graphics2D bGr = bufferedImage.createGraphics();
+	     bGr.drawImage(image2.getImage(), 0, 0, null);
+	     bGr.dispose();
+	     rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(bufferedImage, null)));
+	     chatVBox = listChat.get(receiver2);
+	     tempFlow.getStyleClass().add("tempFlow");
+	     flow.getStyleClass().add("textFlow");
+	     hbox.setAlignment(Pos.BOTTOM_RIGHT);
+	     hbox.getChildren().add(flow);
+	     hbox.getChildren().add(rectangle);
+	     hbox.getStyleClass().add("hbox");
+	     Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
 
+    	
+    	
+    	
+    }
+
+    
     @FXML
     void sendVideoClicked(ActionEvent event) throws RemoteException, IOException {
     	FileChooser fileChooser = new FileChooser();
@@ -294,9 +361,18 @@ public class ChatController implements Initializable, ChatObserver {
     		FileInputStream inputStream = new FileInputStream(video);
     		
     		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
-    		if(chatService.sendFile(username, receiver2, videoName, remoteFileData)) {
-    			displayVideo(username, receiver2, video.getAbsolutePath());
-    		}
+    		
+    		if(receiver2.charAt(0) != '#') {
+    			if(chatService.sendFile(username, receiver2, videoName, remoteFileData)) {
+        			displayVideo(username, receiver2, video.getAbsolutePath());
+        		}
+	        }else{
+	        	//Envoie groupe
+	        	if(chatService.sendFileToGroup(username, receiver2, videoName, remoteFileData)) {
+	    			displayVideo(username, receiver2, video.getAbsolutePath());
+	    		}
+	        }
+    		
     	}
     	else {
     		Alert alert = new Alert(AlertType.ERROR, "The video "+videoName+" is larger than 250 MB !", ButtonType.OK);
@@ -308,7 +384,7 @@ public class ChatController implements Initializable, ChatObserver {
     public void setTimer(Timer timer) {
 		this.timer = timer;
 	}
-	
+
 	// Load messages when someone sends a message
     @Override
 	public boolean refreshMessages(String sender, String receiver, String text) {
@@ -319,6 +395,7 @@ public class ChatController implements Initializable, ChatObserver {
     		sender = sender.split("#")[2];
     		toGroup = true;
     	}
+    	
 	    //if(!toGroup || (toGroup&&!sender.equals(receiver))) {
 	   	if(receiver.equals(username)) {
 		   	if (text.startsWith("[") && text.endsWith("]")) {
@@ -327,17 +404,20 @@ public class ChatController implements Initializable, ChatObserver {
 		    		displayImage(sender, receiver, filename);
 		    	else if (filename.endsWith(".mp4")) {
 		    		if (!username.equals(sender)) {
-						displayVideo(sender, receiver, filename);
+						if(toGroup) displayVideo(sender, groupName, filename);
+		    			else displayVideo(sender, receiver, filename);
 		    		}
 		    	}
 		    	else if (filename.endsWith(".mp3") || filename.endsWith(".wav")) {
 		    		if (!username.equals(sender)) {
-						displayAudio(sender, receiver, filename);
+		    			if(toGroup) displayAudio(sender, groupName, filename);
+		    			else displayAudio(sender, receiver, filename);
 		    		}
 		    	}
 		    	else {
 		    		if (!username.equals(sender)) {
-						displayFile(sender, receiver, filename);
+		    			if(toGroup) displayFile(sender, groupName, filename);
+		    			else displayFile(sender, receiver, filename);
 		    		}
 		    	}
 		    	return true;
@@ -385,7 +465,7 @@ public class ChatController implements Initializable, ChatObserver {
     }
     
 	private boolean displayAudio(String sender, String receiver3, String filename) {
-		if(receiver3.equals(username) || sender.equals(username)) {
+		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("displayVideo");
 			System.out.println(sender + " has sent a video");
 			TextFlow tempFlow = new TextFlow();
@@ -411,7 +491,6 @@ public class ChatController implements Initializable, ChatObserver {
 							getFile(filename);
 						return true;
 					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 						return false;
 					}
@@ -457,7 +536,9 @@ public class ChatController implements Initializable, ChatObserver {
 			new Thread(task).start();
 	
 			if (!username.equals(sender)) {
-				chatVBox = listChat.get(sender);
+				//TODO
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(sender);
+				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlowFlipped");
 				flow.getStyleClass().add("textFlowFlipped");
 				chatVBox.setAlignment(Pos.TOP_LEFT);
@@ -467,7 +548,8 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(slider);
 			}
 			else {
-				chatVBox = listChat.get(receiver2);
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(receiver2);
+				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlow");
 				flow.getStyleClass().add("textFlow");
 				hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -478,12 +560,13 @@ public class ChatController implements Initializable, ChatObserver {
 			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
-		}
+		//}
 		return true;
 	}
-
+	
+	//TODO
 	private boolean displayFile(String sender, String receiver3, String filename) {
-		if(receiver3.equals(username) || sender.equals(username)) {
+		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("DisplayFile");
 			Hyperlink fileLink = new Hyperlink(filename.substring(filename.lastIndexOf('/')+1));
 			fileLink.getStyleClass().add("filename");
@@ -491,11 +574,12 @@ public class ChatController implements Initializable, ChatObserver {
 				Task<Boolean> task = new Task<Boolean>() {
 					public Boolean call() {
 						try {
-							if (!username.equals(sender))
+							if (!username.equals(sender)) {
 								getFile(filename);
+							}
+								
 							return true;
 						} catch (RemoteException e1) {
-							// TODO Auto-generated catch block
 							e1.printStackTrace();
 							return false;
 						}
@@ -513,7 +597,8 @@ public class ChatController implements Initializable, ChatObserver {
 						if (Desktop.isDesktopSupported()) {
 							new Thread(() -> {
 						           try {
-						               Desktop.getDesktop().open(new File(filename));
+						        	   if(username.equals(sender))Desktop.getDesktop().open(new File(filename));
+						        	   else Desktop.getDesktop().open(new File(username+"-"+filename));
 						           } catch (IOException  e1) {
 						               e1.printStackTrace();
 						           }
@@ -537,9 +622,11 @@ public class ChatController implements Initializable, ChatObserver {
 			TextFlow flow = new TextFlow(tempFlow);
 			
 			HBox hbox = new HBox();
-			
 			if (!username.equals(sender)) {
-				chatVBox = listChat.get(sender);
+				//TODO
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(sender);
+				else chatVBox = listChat.get(receiver3);
+				//chatVBox = listChat.get(sender);
 				tempFlow.getStyleClass().add("tempFlowFlipped");
 				flow.getStyleClass().add("textFlowFlipped");
 				chatVBox.setAlignment(Pos.TOP_LEFT);
@@ -547,7 +634,9 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(flow);
 			}
 			else {
-				chatVBox = listChat.get(receiver2);
+				//chatVBox = listChat.get(receiver3);
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(receiver2);
+				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlow");
 				flow.getStyleClass().add("textFlow");
 				hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -556,12 +645,12 @@ public class ChatController implements Initializable, ChatObserver {
 			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
-		}
+		//}
 		return true;
 	}
 
 	private boolean displayVideo(String sender, String receiver3, String filename) {
-		if(receiver3.equals(username) || sender.equals(username)) {
+		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("displayVideo");
 			System.out.println(sender + " has sent a video");
 			TextFlow tempFlow = new TextFlow();
@@ -584,7 +673,6 @@ public class ChatController implements Initializable, ChatObserver {
 							getFile(filename);
 						return true;
 					} catch (RemoteException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 						return false;
 					}
@@ -620,7 +708,8 @@ public class ChatController implements Initializable, ChatObserver {
 			new Thread(task).start();
 	
 			if (!username.equals(sender)) {
-				chatVBox = listChat.get(sender);
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(sender);
+				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlowFlipped");
 				flow.getStyleClass().add("textFlowFlipped");
 				chatVBox.setAlignment(Pos.TOP_LEFT);
@@ -629,7 +718,8 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(mv);
 			}
 			else {
-				chatVBox = listChat.get(receiver2);
+				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(receiver2);
+				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlow");
 				flow.getStyleClass().add("textFlow");
 				hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -639,7 +729,7 @@ public class ChatController implements Initializable, ChatObserver {
 			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
-		}
+		//}
 		return true;
 	}
 
@@ -703,7 +793,6 @@ public class ChatController implements Initializable, ChatObserver {
 					return true;
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -713,7 +802,16 @@ public class ChatController implements Initializable, ChatObserver {
 // Load messages when someone sends a message
     @Override
     public boolean refreshImages(String sender, String receiver, ImageIcon image) {
-    	if(receiver.equals(username) || sender.equals(username)) {
+    	
+    	String groupName=null;
+    	boolean toGroup = false;
+    	if(sender.charAt(0)=='#') {
+    		groupName = "#"+sender.split("#")[1];
+    		sender = sender.split("#")[2];
+    		toGroup = true;
+    	}
+    	
+    	if(receiver.equals(username)) {
 	    	System.out.println(sender + " has sent an image");
 	        TextFlow tempFlow = new TextFlow();
 	        if(!username.equals(sender)) {
@@ -746,7 +844,8 @@ public class ChatController implements Initializable, ChatObserver {
 	
 	        rectangle.setFill(new ImagePattern(SwingFXUtils.toFXImage(bufferedImage, null)));
 	        if (!username.equals(sender)) {
-	        	chatVBox = listChat.get(sender);
+	        	if(!toGroup) chatVBox = listChat.get(sender);
+				else chatVBox = listChat.get(groupName);
 	        	tempFlow.getStyleClass().add("tempFlowFlipped");
 	        	flow.getStyleClass().add("textFlowFlipped");
 	        	chatVBox.setAlignment(Pos.TOP_LEFT);
@@ -755,7 +854,8 @@ public class ChatController implements Initializable, ChatObserver {
 	        	hbox.getChildren().add(rectangle);
 	        }
 	        else {
-	        	chatVBox = listChat.get(receiver2);
+	        	if(!toGroup) chatVBox = listChat.get(receiver2);
+				else chatVBox = listChat.get(groupName);
 	        	tempFlow.getStyleClass().add("tempFlow");
 	        	flow.getStyleClass().add("textFlow");
 	        	hbox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -777,7 +877,6 @@ public class ChatController implements Initializable, ChatObserver {
 			chatService.addChatObserver(chatObserver);
 			System.out.println("initialize");
 		} catch (MalformedURLException | RemoteException | NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		chatBox.setDisable(true);
@@ -852,7 +951,7 @@ public class ChatController implements Initializable, ChatObserver {
 	public ChatObserver getChatObserver() {
 		return chatObserver;
 	}
-
+	
 	public boolean getFile(String filename) throws RemoteException {
 		RemoteOutputStreamServer outputStream = null;
 		  try {

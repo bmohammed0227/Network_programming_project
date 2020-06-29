@@ -58,7 +58,7 @@ public class ChatObservable {
 	public boolean removeChatObserver(ChatObserver chatObserver) {
 		return chatObserverList.remove(chatObserver);
 	}
-
+	//TODO
 	public boolean sendFileTo(String sender, String receiver, String filename) throws RemoteException {
         for (ChatObserver observer : chatObserverList) {
         	String text = "["+filename+"]";

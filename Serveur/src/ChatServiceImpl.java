@@ -155,7 +155,6 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
             System.out.println("User registered successfully");
             return true;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
@@ -173,7 +172,6 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
             System.out.println("User registered successfully");
             return true;
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             return false;
         }
@@ -189,7 +187,7 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean sendImageTo(String sender, String receiver, ImageIcon image) throws RemoteException {
 		return CHAT_OBSERVABLE.sendImageTo(sender, receiver, image);
 	}
-	
+	//
 	@Override
 	public boolean sendFileTo(String sender, String receiver, File file) throws RemoteException {
 //		new Thread() {
@@ -227,14 +225,13 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException {
 		return CHAT_OBSERVABLE.removeChatObserver(chatObserver);
 	}
-	
+	//TODO
 	@Override
 	public boolean sendFile(String sender, String receiver, String filename,RemoteInputStream inputFile) throws RemoteException {
 	    InputStream inputStream = null;
 		try {
 			inputStream = RemoteInputStreamClient.wrap(inputFile);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	 
@@ -249,13 +246,38 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, filename);
 	  }
 	
+	
+	@Override
+	public boolean sendFileToGroup(String sender, String receiver, String filename,RemoteInputStream inputFile) throws RemoteException {
+	    InputStream inputStream = null;
+		try {
+			inputStream = RemoteInputStreamClient.wrap(inputFile);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	 
+    	File videoFile = new File(filename);
+		try{
+			OutputStream outputStream = new FileOutputStream(videoFile);
+			IOUtils.copy(inputStream, outputStream);
+		} catch (IOException e) {
+			// handle exception here
+		}
+		System.out.println("Size: "+videoFile.length());
+		Group group = CHAT_OBSERVABLE.getGroup(receiver);
+		for(String participant:group.getParticipants()) {
+			if(!sender.equals(participant))
+				CHAT_OBSERVABLE.sendFileTo("#"+group.getName()+"#"+sender, participant, filename);
+		}
+		return true;
+	  }
+	
 	@Override
 	public boolean getFile(RemoteOutputStream outputFile, String filename) throws RemoteException {
 	    OutputStream outputStream = null;
 		try {
 			outputStream = RemoteOutputStreamClient.wrap(outputFile);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 	 
@@ -287,6 +309,15 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 		for(String participant:group.getParticipants()) {
 			if(!username.equals(participant))
 				sendTextTo("#"+group.getName()+"#"+username, participant, textMessage);
+		}
+	}
+
+	@Override
+	public void sendImageToGroup(String username, String receiver, ImageIcon imageIcon) throws RemoteException {
+		Group group = CHAT_OBSERVABLE.getGroup(receiver);
+		for(String participant:group.getParticipants()) {
+			if(!username.equals(participant))
+				sendImageTo("#"+group.getName()+"#"+username, participant, imageIcon);
 		}
 	}
 }
