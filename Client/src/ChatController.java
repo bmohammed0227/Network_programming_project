@@ -106,8 +106,20 @@ public class ChatController implements Initializable, ChatObserver {
     private TextArea chatBox;
 
     @FXML
-    private Button buttonSend;
+    private Button buttonSendText; 
+   
+    @FXML
+    private Button buttonSendFile;
 
+    @FXML
+    private Button buttonSendImg;
+
+    @FXML
+    private Button buttonSendaudio;
+
+    @FXML
+    private Button buttonSendVid;
+    
     @FXML
     private Label usernameLabel;
 
@@ -139,6 +151,7 @@ public class ChatController implements Initializable, ChatObserver {
  		creatGroupController groupController = loader.getController();
  		groupController.setOnlineUsers(new ArrayList<String>(listChat.keySet()));
  		groupController.setUsername(username);
+ 		groupController.setChatGroups(this.chatService.getAllgroups());
  		stageCreatController.show();
     }
 	
@@ -219,7 +232,7 @@ public class ChatController implements Initializable, ChatObserver {
     	ExtensionFilter wavFilter = new ExtensionFilter("Audio WAV (.wav)", "*.wav");
     	fileChooser.getExtensionFilters().add(mp3Filter);
     	fileChooser.getExtensionFilters().add(wavFilter);
-    	File audio = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+    	File audio = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
     	String audioName = audio.getName();
     	if (audioName == null)
 		  System.out.println("You cancelled the choice");
@@ -253,7 +266,7 @@ public class ChatController implements Initializable, ChatObserver {
     void sendFileClicked(ActionEvent event) throws RemoteException, FileNotFoundException {
     	FileChooser fileChooser = new FileChooser();
 	    fileChooser.setTitle("Selectionez un fichier pour l'envoyer:");
-	    File file = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+	    File file = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
 	    String fileName = file.getName();
 	    if (file !=null) {
 	    	if(file.length() < 25000000) {
@@ -290,7 +303,7 @@ public class ChatController implements Initializable, ChatObserver {
     	fileChooser.getExtensionFilters().add(pngFilter);
     	fileChooser.getExtensionFilters().add(jpegFilter);
     	fileChooser.getExtensionFilters().add(jpgFilter);
-    	File image = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+    	File image = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
     	String imageName = image.getName();
 
     	File outputImage = null;
@@ -355,7 +368,7 @@ public class ChatController implements Initializable, ChatObserver {
     	ExtensionFilter mkvFilter = new ExtensionFilter("Videos MKV (.mkv)", "*.mkv");
     	fileChooser.getExtensionFilters().add(mp4Filter);
     	fileChooser.getExtensionFilters().add(mkvFilter);
-    	File video = fileChooser.showOpenDialog(buttonSend.getScene().getWindow());
+    	File video = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
     	String videoName = video.getName();
     	if (videoName == null)
 		  System.out.println("You cancelled the choice");
@@ -851,6 +864,11 @@ public class ChatController implements Initializable, ChatObserver {
 			e.printStackTrace();
 		}
 		chatBox.setDisable(true);
+		buttonSendText.setDisable(true);
+		buttonSendFile.setDisable(true);
+		buttonSendImg.setDisable(true);
+		buttonSendaudio.setDisable(true);
+		buttonSendVid.setDisable(true);
 	}
 
 	@Override
@@ -891,7 +909,14 @@ public class ChatController implements Initializable, ChatObserver {
 				Platform.runLater(() -> usersVBox.getChildren().addAll(hbox));
 			}
 		}
-		if(hashMapEvent.get(receiver2)==null) chatBox.setDisable(true);
+		if(hashMapEvent.get(receiver2)==null) {
+			chatBox.setDisable(true);
+			buttonSendText.setDisable(true);
+			buttonSendFile.setDisable(true);
+			buttonSendImg.setDisable(true);
+			buttonSendaudio.setDisable(true);
+			buttonSendVid.setDisable(true);
+		}
         return true;
 	}
 	
@@ -901,6 +926,11 @@ public class ChatController implements Initializable, ChatObserver {
 				   @Override 
 				   public void handle(MouseEvent e) { 
 					   chatBox.setDisable(false);
+					   buttonSendText.setDisable(false);
+					   buttonSendFile.setDisable(false);
+					   buttonSendImg.setDisable(false);
+					   buttonSendaudio.setDisable(false);
+					   buttonSendVid.setDisable(false);
 					   receiver2 = user; // on affecte le receiver pour l'envoie des messages
 						Platform.runLater(()->{
 							System.out.println("L'utilisateur selectionn� : "+user);

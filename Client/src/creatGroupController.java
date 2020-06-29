@@ -32,6 +32,8 @@ public class creatGroupController {
 	@FXML
 	private Button add;
 	
+	private ArrayList<Group> chatGroups;
+	
 	private Group group;
 	
 	String SERVER_IP = "localhost";
@@ -44,6 +46,12 @@ public class creatGroupController {
 		// si l'utilisateur entre un nom d'une personne ou d'un groupe existant erreur (après)
 		if(nameGroup.getText().equals("")) {
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez entrer un nom de groupe", ButtonType.OK);
+    		alert.showAndWait();
+		}if(nameGroup.getText().contains("#")) {
+			Alert alert = new Alert(AlertType.ERROR, "Veuillez enlever le(s) symbole(s) '#'", ButtonType.OK);
+    		alert.showAndWait();
+		}else if(exist(nameGroup.getText())) {
+			Alert alert = new Alert(AlertType.ERROR, "Ce nom existe déjà veuillez choisir un autre nom", ButtonType.OK);
     		alert.showAndWait();
 		}else if (selectedItems.size()==0){
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez selectionner au moins un utilisateur", ButtonType.OK);
@@ -61,6 +69,13 @@ public class creatGroupController {
 		
 	}
 	
+	private boolean exist(String chosenName) {
+		for(Group group:chatGroups) 
+			if(group.getName().equals(chosenName))
+				return true;
+		return false;
+	}
+
 	public void setOnlineUsers(ArrayList<String> onlineUsers) {
 		oneline_users_Column.setCellValueFactory(param -> new ReadOnlyStringWrapper(param.getValue()));
 		TV_OnlineUsers.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -75,6 +90,10 @@ public class creatGroupController {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public void setChatGroups(ArrayList<Group> g) {
+		this.chatGroups = g;
 	}
 	
 

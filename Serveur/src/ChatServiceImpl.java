@@ -292,4 +292,9 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 				sendTextTo("#"+group.getName()+"#"+username, participant, textMessage);
 		}
 	}
+
+	@Override
+	public ArrayList<Group> getAllgroups() throws RemoteException {
+		return this.CHAT_OBSERVABLE.getAllGroups();
+	}
 }

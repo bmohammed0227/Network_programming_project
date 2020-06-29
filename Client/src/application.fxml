@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.paint.RadialGradient?>
@@ -11,10 +12,10 @@
 <AnchorPane maxHeight="400" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="352.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <TextField fx:id="username" layoutX="151.0" layoutY="54.0" prefHeight="25.0" prefWidth="71.0" promptText="Pseudo" />
-      <TextField fx:id="password" layoutX="225.0" layoutY="54.0" prefHeight="25.0" prefWidth="95.0" promptText="Mot de passe" />
-      <Button fx:id="signIn" layoutX="23.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleSignIn" text="Se connecter" textAlignment="CENTER" textFill="#1637b1">
+      <PasswordField fx:id="password" layoutX="225.0" layoutY="54.0" prefHeight="25.0" prefWidth="95.0" promptText="Mot de passe" />
+      <Button fx:id="confirm" layoutX="23.0" layoutY="142.0" mnemonicParsing="false" onAction="#handleConfirm" prefHeight="11.0" prefWidth="114.0" text="Confirmer" textFill="#1302ae">
          <font>
-            <Font size="16.0" />
+            <Font name="System Bold" size="12.0" />
          </font>
       </Button>
       <Button fx:id="register" layoutX="23.0" layoutY="97.0" mnemonicParsing="false" onAction="#handleRegister" prefHeight="37.0" prefWidth="114.0" text="S'inscrire" textAlignment="CENTER" textFill="#1637b1">
@@ -22,9 +23,15 @@
             <Font size="16.0" />
          </font>
       </Button>
-      <TextField fx:id="first_name" layoutX="153.0" layoutY="181.0" prefHeight="25.0" prefWidth="167.0" promptText="Prénom (facultatif)" visible="false" />
-      <TextField fx:id="name" layoutX="153.0" layoutY="149.0" prefHeight="25.0" prefWidth="167.0" promptText="Nom (facultatif)" visible="false" />
+      <TextField fx:id="email" layoutX="153.0" layoutY="85.0" prefHeight="25.0" prefWidth="167.0" promptText="Adresse email" visible="false" />
       <TextField fx:id="password_confirmation" layoutX="153.0" layoutY="117.0" prefHeight="25.0" prefWidth="167.0" promptText="Confirmer le mot de passe" visible="false" />
+      <TextField fx:id="name" layoutX="153.0" layoutY="149.0" prefHeight="25.0" prefWidth="167.0" promptText="Nom (facultatif)" visible="false" />
+      <TextField fx:id="first_name" layoutX="153.0" layoutY="181.0" prefHeight="25.0" prefWidth="167.0" promptText="Prénom (facultatif)" visible="false" />
+      <Button fx:id="signIn" layoutX="23.0" layoutY="53.0" mnemonicParsing="false" onAction="#handleSignIn" text="Se connecter" textAlignment="CENTER" textFill="#1637b1">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Button>
       <Text layoutX="171.0" layoutY="39.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AC">
          <font>
             <Font size="36.0" />
@@ -38,12 +45,6 @@
             </RadialGradient>
          </fill>
       </Text>
-      <Button fx:id="confirm" layoutX="23.0" layoutY="142.0" mnemonicParsing="false" onAction="#handleConfirm" prefHeight="11.0" prefWidth="114.0" text="Confirmer" textFill="#1302ae">
-         <font>
-            <Font name="System Bold" size="12.0" />
-         </font>
-      </Button>
-      <TextField fx:id="email" layoutX="153.0" layoutY="85.0" prefHeight="25.0" prefWidth="167.0" promptText="Adresse email" visible="false" />
       
    </children>
 </AnchorPane>
