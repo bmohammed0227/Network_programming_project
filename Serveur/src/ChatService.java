@@ -15,4 +15,8 @@ public interface ChatService extends Remote {
 	public boolean addChatObserver(ChatObserver chatObserver) throws RemoteException;
 	public boolean removeChatObserver(ChatObserver chatObserver) throws RemoteException;
 	public boolean updateOnlineUsers() throws RemoteException;
+	public void addGroup(Group group) throws RemoteException;
+	public void sendTextToGroup(String username, String receiver, String textMessage) throws RemoteException;
+	boolean sendFileToGroup(String sender, String receiver, String filename, RemoteInputStream inputFile)
+			throws RemoteException;
 }

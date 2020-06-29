@@ -34,7 +34,8 @@
                               </AnchorPane>
                               <AnchorPane prefHeight="40.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="buttonLogout" layoutX="71.0" layoutY="6.0" mnemonicParsing="false" onAction="#logoutClicked" text="Log out" />
+                                    <Button fx:id="buttonLogout" layoutX="29.0" layoutY="8.0" mnemonicParsing="false" onAction="#logoutClicked" text="Log out" />
+                                    <Button fx:id="buttonCreateGroup" layoutX="104.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleCreateGroup" text="Create group" />
                                  </children>
                               </AnchorPane>
                            </children>
@@ -85,7 +86,6 @@
       </AnchorPane>
       <AnchorPane fx:id="titleBar" prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <Button fx:id="buttonClose" mnemonicParsing="false" onAction="#closeClicked" prefHeight="30.0" prefWidth="20.0" text="Q" AnchorPane.rightAnchor="0.0" />
             <Label layoutX="10.0" layoutY="5.0" text="Network Project" />
          </children>
       </AnchorPane>
