@@ -134,9 +134,12 @@ public class ChatController implements Initializable, ChatObserver {
     
 	private Timer timer;
 	
+	private boolean logOut = false;
 	private void closeWindowEvent(WindowEvent event) throws IOException {
-		logoutClicked(null);
-        System.exit(0);
+		if(!logOut) {
+			logoutClicked(null);
+	        System.exit(0);
+		}
     }
    
 	@FXML
@@ -157,6 +160,7 @@ public class ChatController implements Initializable, ChatObserver {
 	
     @FXML
     void logoutClicked(ActionEvent event) throws IOException {
+    	logOut = true;
     	chatService.removeChatObserver(chatObserver);
     	chatService.updateOnlineUsers();
     	timer.cancel();
