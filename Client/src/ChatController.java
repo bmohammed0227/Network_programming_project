@@ -82,6 +82,8 @@ public class ChatController implements Initializable, ChatObserver {
 	String receiver2;
 	String SERVER_IP = "localhost";
 	HashMap<String, VBox> listChat = new HashMap<>();
+	HashMap<String, Double> HeightAnchorPane = new HashMap<>();
+	
 	ArrayList<Text> listT = new ArrayList<>();
 	HashMap<String, EventHandler<MouseEvent>> hashMapEvent = new HashMap<>();
 	private Stage stageCreatController;
@@ -205,6 +207,10 @@ public class ChatController implements Initializable, ChatObserver {
 		hbox.getChildren().add(flow);
 		hbox.getStyleClass().add("hbox");
 		chatVBox = listChat.get(receiver2);
+		
+		if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+			chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
+		
 		Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
         
         
@@ -213,6 +219,7 @@ public class ChatController implements Initializable, ChatObserver {
     }
     
     public void initUsername(String pseudo) throws RemoteException {
+    	this.chatAnchorPane.resize(500, 2000);
     	System.out.println("PSEUDO:["+pseudo+"]");
     	username = pseudo;
     	usernameLabel.setText(pseudo);
@@ -309,7 +316,6 @@ public class ChatController implements Initializable, ChatObserver {
     	fileChooser.getExtensionFilters().add(jpgFilter);
     	File image = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
     	String imageName = image.getName();
-
     	File outputImage = null;
     	String outputImageName = null;
 
@@ -479,6 +485,9 @@ public class ChatController implements Initializable, ChatObserver {
 					hbox.getChildren().add(flow);
 				}
 				
+				if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+					chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
+				
 				hbox.getStyleClass().add("hbox");
 				Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
 		    }	
@@ -580,6 +589,9 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(slider);
 			}
 			
+			if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+				chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
+			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
 		//}
@@ -665,6 +677,9 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(flow);
 			}
 			
+			if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+				chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
+			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
 		//}
@@ -748,6 +763,10 @@ public class ChatController implements Initializable, ChatObserver {
 				hbox.getChildren().add(flow);
 				hbox.getChildren().add(mv);
 			}
+			// Resize
+			if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+				chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
+			
 			
 			hbox.getStyleClass().add("hbox");
 			Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
@@ -848,6 +867,10 @@ public class ChatController implements Initializable, ChatObserver {
 			hbox.getChildren().add(flow);
 			hbox.getChildren().add(rectangle);
 		}
+		
+		// Resize
+		if(chatVBox.getHeight()>chatAnchorPane.getHeight()-350) 
+			chatAnchorPane.setPrefHeight(chatAnchorPane.getHeight()+350);
 		
 		hbox.getStyleClass().add("hbox");
 		Platform.runLater(() -> chatVBox.getChildren().addAll(hbox));
