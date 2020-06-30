@@ -82,8 +82,6 @@ public class ChatController implements Initializable, ChatObserver {
 	String receiver2;
 	String SERVER_IP = "localhost";
 	HashMap<String, VBox> listChat = new HashMap<>();
-	HashMap<String, Double> HeightAnchorPane = new HashMap<>();
-	
 	ArrayList<Text> listT = new ArrayList<>();
 	HashMap<String, EventHandler<MouseEvent>> hashMapEvent = new HashMap<>();
 	private Stage stageCreatController;
@@ -219,7 +217,6 @@ public class ChatController implements Initializable, ChatObserver {
     }
     
     public void initUsername(String pseudo) throws RemoteException {
-    	this.chatAnchorPane.resize(500, 2000);
     	System.out.println("PSEUDO:["+pseudo+"]");
     	username = pseudo;
     	usernameLabel.setText(pseudo);
