@@ -316,21 +316,18 @@ public class ChatController implements Initializable, ChatObserver {
     	if (imageName.endsWith("png")) {
 			IMOperation op = new IMOperation();
 			op.addImage(image.getAbsolutePath());
-			outputImageName = imageName.substring(0, imageName.lastIndexOf('.') -1) +".jpg" ;
+			outputImageName = imageName.substring(0, imageName.lastIndexOf('.')) +".jpg" ;
 			outputImage = new File(outputImageName);
 			outputImage.createNewFile();
 			op.addImage(outputImage.getName());
 			ConvertCmd convert = new ConvertCmd();
 			try {
 				convert.run(op);
-			} catch (InterruptedException e1) {
+			} catch (InterruptedException | IM4JavaException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
-			} catch (IM4JavaException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-    	}
+			} 
+		}
     	else {
     		outputImage = image;
     		outputImageName = outputImage.getName();

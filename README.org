@@ -40,11 +40,11 @@
     Le fichier aura une limite de taille qui sera defini pendent la realisation
     #+end_quote
 
-* TODO [0/4] Secondary Tasks
+* TODO [1/4] Secondary Tasks
 
   1) [ ] Permettre au utilisateurs d'avoir une photo de profil
   2) [ ] Ajouter un mot de passe a la base de données
-  3) [ ] Régler le problème d'écrasement de fichiers avec le meme nom (lui ajouter la date par exemple)
+  3) [X] Régler le problème d'écrasement de fichiers avec le meme nom (lui ajouter la date par exemple)
   4) [ ] Afficher les infos des clients connectés a gauche
 
 * Objectives

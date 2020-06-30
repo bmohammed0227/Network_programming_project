@@ -51,23 +51,23 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
             }
         }
 
-        // on definit un timer pour actualiser les infos
-        TimerTask repeatedTask = new TimerTask() {
-            public void run() {
-                System.out.println("Affichage des clients connectee : ");
-                System.out.println("-----------");
-                for (int i = 0; i < comptes.size(); i++) {
-                    Compte c = comptes.get(i);
-                    if (c.isStatus() && ((new Date().getTime() - c.getDate().getTime()) / 1000 > 1))
-                        c.setStatus(false);
-                    if (c.isStatus())
-                        System.out.println(c.getPseudo());
-                }
-                System.out.println("-----------");
-            }
-        };
-        Timer timer = new Timer("Timer");
-        timer.scheduleAtFixedRate(repeatedTask, 0, 1000);
+//        // on definit un timer pour actualiser les infos
+//        TimerTask repeatedTask = new TimerTask() {
+//            public void run() {
+//                System.out.println("Affichage des clients connectee : ");
+//                System.out.println("-----------");
+//                for (int i = 0; i < comptes.size(); i++) {
+//                    Compte c = comptes.get(i);
+//                    if (c.isStatus() && ((new Date().getTime() - c.getDate().getTime()) / 1000 > 1))
+//                        c.setStatus(false);
+//                    if (c.isStatus())
+//                        System.out.println(c.getPseudo());
+//                }
+//                System.out.println("-----------");
+//            }
+//        };
+//        Timer timer = new Timer("Timer");
+//        timer.scheduleAtFixedRate(repeatedTask, 0, 1000);
     }
 
     @Override
@@ -207,10 +207,11 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 			e1.printStackTrace();
 		}
 	 
-    	File videoFile = new File(filename);
+		String newFilename = System.currentTimeMillis()+filename.substring(filename.lastIndexOf('.'));
+    	File file = new File(newFilename);
     	OutputStream outputStream = null;
 		try{
-			outputStream = new FileOutputStream(videoFile);
+			outputStream = new FileOutputStream(file);
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			// handle exception here
@@ -223,8 +224,8 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 				e.printStackTrace();
 			}
 		}
-		System.out.println("Size: "+videoFile.length());
-		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, filename);
+		System.out.println("Size: "+file.length());
+		return CHAT_OBSERVABLE.sendFileTo(sender, receiver, newFilename);
 	  }
 	
 	
@@ -237,18 +238,19 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 			e1.printStackTrace();
 		}
 	 
-    	File videoFile = new File(filename);
+		String newFilename = System.currentTimeMillis()+filename.substring(filename.lastIndexOf('.'));
+    	File file = new File(newFilename);
 		try{
-			OutputStream outputStream = new FileOutputStream(videoFile);
+			OutputStream outputStream = new FileOutputStream(file);
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			// handle exception here
 		}
-		System.out.println("Size: "+videoFile.length());
+		System.out.println("Size: "+file.length());
 		Group group = CHAT_OBSERVABLE.getGroup(receiver);
 		for(String participant:group.getParticipants()) {
 			if(!sender.equals(participant))
-				CHAT_OBSERVABLE.sendFileTo("#"+group.getName()+"#"+sender, participant, filename);
+				CHAT_OBSERVABLE.sendFileTo("#"+group.getName()+"#"+sender, participant, newFilename);
 		}
 		return true;
 	  }
