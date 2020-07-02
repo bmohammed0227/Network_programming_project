@@ -240,11 +240,20 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	 
 		String newFilename = System.currentTimeMillis()+filename.substring(filename.lastIndexOf('.'));
     	File file = new File(newFilename);
+		OutputStream outputStream = null;
 		try{
-			OutputStream outputStream = new FileOutputStream(file);
+			outputStream = new FileOutputStream(file);
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			// handle exception here
+		}
+		finally {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		System.out.println("Size: "+file.length());
 		Group group = CHAT_OBSERVABLE.getGroup(receiver);

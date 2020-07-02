@@ -9,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -16,15 +18,29 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.Timer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.swing.ImageIcon;
 
+import org.bytedeco.ffmpeg.global.avcodec;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.FrameGrabber;
+import org.bytedeco.javacv.Java2DFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+import org.bytedeco.javacv.OpenCVFrameConverter.ToMat;
+import org.bytedeco.javacv.OpenCVFrameGrabber;
+import org.bytedeco.opencv.opencv_core.Mat;
+import org.bytedeco.opencv.opencv_videoio.VideoCapture;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
 import org.im4java.core.IMOperation;
-import org.im4java.utils.FilenameLoader;
 
 import com.healthmarketscience.rmiio.RemoteOutputStreamServer;
 import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
@@ -132,7 +148,15 @@ public class ChatController implements Initializable, ChatObserver {
     @FXML
     private VBox usersVBox;
     
+    @FXML
+    private Button startCameraBtn;
+    
+    @FXML
+    private VBox cameraVBox;
+    
 	private Timer timer;
+	
+	private boolean stopTask;
 	
 	private boolean logOut = false;
 	private void closeWindowEvent(WindowEvent event) throws IOException {
@@ -991,5 +1015,56 @@ public class ChatController implements Initializable, ChatObserver {
 		  }
 	}
 
-	
+	@FXML
+	protected void startCamera(ActionEvent event) {
+		if(cameraVBox.getChildren().isEmpty()) {
+			stopTask = false;
+			Image loadingImage = new Image("file:res/loading.png");
+			ImageView ownWebcam = new ImageView();
+			ownWebcam.setFitWidth(cameraVBox.getPrefWidth());
+			ownWebcam.setPreserveRatio(true);
+			ownWebcam.setImage(loadingImage);
+			cameraVBox.getChildren().add(ownWebcam);
+			Task<Boolean> task = new Task<Boolean>() {
+				@Override
+				protected Boolean call() throws Exception {
+					OpenCVFrameGrabber grabber = new OpenCVFrameGrabber(-1);
+		            grabber.setImageWidth(1280);	// Recording Dimentsions
+		            grabber.setImageHeight(720);
+		            grabber.start();
+					final Java2DFrameConverter converter = new Java2DFrameConverter();
+
+					while (stopTask != true) {
+						Frame frame = grabber.grab();
+						if (frame == null) {
+							break;
+						}
+						if (frame.image != null) {
+							final Image image = SwingFXUtils.toFXImage(converter.convert(frame), null);
+							ownWebcam.setImage(image);
+						} else if (frame.samples != null) {
+							final ShortBuffer channelSamplesShortBuffer = (ShortBuffer) frame.samples[0];
+							channelSamplesShortBuffer.rewind();
+
+							final ByteBuffer outBuffer = ByteBuffer.allocate(channelSamplesShortBuffer.capacity() * 2);
+
+							for (int i = 0; i < channelSamplesShortBuffer.capacity(); i++) {
+								short val = channelSamplesShortBuffer.get(i);
+								outBuffer.putShort(val);
+							}
+
+						}
+					}
+					grabber.stop();
+					grabber.release();
+					return true;
+				}
+			};
+			new Thread(task).start();
+		}
+		else {
+			stopTask = true;
+			cameraVBox.getChildren().clear();
+		}
+	}
 }
