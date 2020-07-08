@@ -70,6 +70,14 @@ public class Controller implements Initializable{
 
     @FXML
     void handleConfirm(ActionEvent event) throws IOException, NotBoundException {
+		if(serverIPTextField.getText().isEmpty()) {
+			SERVER_IP = "localhost";
+			System.out.println("localhost");
+		}
+		else {
+			SERVER_IP = serverIPTextField.getText();
+			System.out.println(SERVER_IP);
+		}
 		chatService = (ChatService) Naming.lookup("rmi://" + SERVER_IP + "/list");
     	ArrayList list = new ArrayList();
     	if(choice) { // Demande d'inscription
@@ -254,9 +262,11 @@ public class Controller implements Initializable{
 	    // String SERVER_IP = "172.23.139.139";
 		if(serverIPTextField.getText().isEmpty()) {
 			SERVER_IP = "localhost";
+			System.out.println("localhost");
 		}
 		else {
 			SERVER_IP = serverIPTextField.getText();
+			System.out.println(SERVER_IP);
 		}
 			ChatService stub = null;
 			try {
