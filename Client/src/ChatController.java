@@ -72,6 +72,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -254,6 +256,10 @@ public class ChatController implements Initializable, ChatObserver {
 				e.printStackTrace();
 			}
 		});
+	}
+
+    public void initServerIP(String serverIP) {
+    	SERVER_IP = serverIP;
 	}
     
     @FXML
@@ -914,6 +920,20 @@ public class ChatController implements Initializable, ChatObserver {
 		buttonSendImg.setDisable(true);
 		buttonSendaudio.setDisable(true);
 		buttonSendVid.setDisable(true);
+		chatBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent keyEvent) {
+				try {
+					if(keyEvent.getCode() == KeyCode.ENTER)
+						sendMessageClicked(null);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+		});
 	}
 
 	@Override
@@ -932,7 +952,7 @@ public class ChatController implements Initializable, ChatObserver {
 				if(listChat.get(onlineUser)==null) { // Si un autre utilisateur vient de se connecter
 					VBox v = new VBox(); // on creer le vbox associ� a lui
 					v.setPrefHeight(440);
-					v.setPrefWidth(470);
+					v.setPrefWidth(460);
 					listChat.put(onlineUser, v); // on l'ajoute a la liste
 				}
 				listT.get(i).addEventFilter(MouseEvent.MOUSE_CLICKED, this.function_event(listT.get(i).getText()));

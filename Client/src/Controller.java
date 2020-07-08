@@ -12,6 +12,8 @@ import java.util.TimerTask;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,6 +23,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 public class Controller implements Initializable{
@@ -53,6 +57,9 @@ public class Controller implements Initializable{
     
     @FXML
     private Button confirm;
+
+    @FXML
+    private TextField serverIPTextField;
 
     private boolean choice = false; // false ==> sign_in, true => register
     
@@ -181,6 +188,22 @@ public class Controller implements Initializable{
                }
             }
         });
+		
+		password.setOnKeyPressed(new EventHandler<KeyEvent>() {
+
+			@Override
+			public void handle(KeyEvent keyEvent) {
+				if(keyEvent.getCode() == KeyCode.ENTER) {
+					try {
+						handleConfirm(null);
+					} catch (IOException | NotBoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
 	}
 	
 	private void connected(String pseudo) throws IOException {
@@ -210,6 +233,7 @@ public class Controller implements Initializable{
 		stage.setTitle("Application de communication");
 		ChatController chat = loader.getController();
 		chat.initUsername(username.getText());
+		chat.initServerIP(SERVER_IP);
 		chat.setTimer(timer);
 		stage.setOnCloseRequest(event -> {
 			try {
@@ -228,6 +252,12 @@ public class Controller implements Initializable{
 	private int send(ArrayList list) throws RemoteException {
 //	    String SERVER_IP = "localhost";
 	    // String SERVER_IP = "172.23.139.139";
+		if(serverIPTextField.getText().isEmpty()) {
+			SERVER_IP = "localhost";
+		}
+		else {
+			SERVER_IP = serverIPTextField.getText();
+		}
 			ChatService stub = null;
 			try {
 				stub =  (ChatService)Naming.lookup("rmi://"+SERVER_IP+"/list");
