@@ -72,11 +72,9 @@ public class Controller implements Initializable{
     void handleConfirm(ActionEvent event) throws IOException, NotBoundException {
 		if(serverIPTextField.getText().isEmpty()) {
 			SERVER_IP = "localhost";
-			System.out.println("localhost");
 		}
 		else {
 			SERVER_IP = serverIPTextField.getText();
-			System.out.println(SERVER_IP);
 		}
 		chatService = (ChatService) Naming.lookup("rmi://" + SERVER_IP + "/list");
     	ArrayList list = new ArrayList();
@@ -233,6 +231,9 @@ public class Controller implements Initializable{
 	    timer.scheduleAtFixedRate(repeatedTask, 0, 1000);
 	    
 	     FXMLLoader loader = new FXMLLoader(getClass().getResource("chat_window.fxml"));
+	     loader.setControllerFactory(c -> {
+	    	 return new ChatController(SERVER_IP);
+	     });
 	    Parent root = (Parent)loader.load();
 		Scene scene = new Scene(root);
 		Stage stage = (Stage) username.getScene().getWindow();
@@ -241,7 +242,6 @@ public class Controller implements Initializable{
 		stage.setTitle("Application de communication");
 		ChatController chat = loader.getController();
 		chat.initUsername(username.getText());
-		chat.initServerIP(SERVER_IP);
 		chat.setTimer(timer);
 		stage.setOnCloseRequest(event -> {
 			try {
@@ -262,11 +262,9 @@ public class Controller implements Initializable{
 	    // String SERVER_IP = "172.23.139.139";
 		if(serverIPTextField.getText().isEmpty()) {
 			SERVER_IP = "localhost";
-			System.out.println("localhost");
 		}
 		else {
 			SERVER_IP = serverIPTextField.getText();
-			System.out.println(SERVER_IP);
 		}
 			ChatService stub = null;
 			try {

@@ -36,14 +36,18 @@ public class creatGroupController {
 	
 	private Group group;
 	
-	String SERVER_IP = "localhost";
+	String SERVER_IP;
 	
 	String username;
+	public creatGroupController(String IPAddress) {
+		SERVER_IP = IPAddress;
+	}
+
 	@FXML
 	void handleAdd(ActionEvent event) throws RemoteException, MalformedURLException, NotBoundException {
 		ObservableList<String> selectedItems = TV_OnlineUsers.getSelectionModel().getSelectedItems();
 
-		// si l'utilisateur entre un nom d'une personne ou d'un groupe existant erreur (après)
+		// si l'utilisateur entre un nom d'une personne ou d'un groupe existant erreur (aprï¿½s)
 		if(nameGroup.getText().equals("")) {
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez entrer un nom de groupe", ButtonType.OK);
     		alert.showAndWait();
@@ -51,7 +55,7 @@ public class creatGroupController {
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez enlever le(s) symbole(s) '#'", ButtonType.OK);
     		alert.showAndWait();
 		}else if(exist(nameGroup.getText())) {
-			Alert alert = new Alert(AlertType.ERROR, "Ce nom existe déjà veuillez choisir un autre nom", ButtonType.OK);
+			Alert alert = new Alert(AlertType.ERROR, "Ce nom existe dï¿½jï¿½ veuillez choisir un autre nom", ButtonType.OK);
     		alert.showAndWait();
 		}else if (selectedItems.size()==0){
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez selectionner au moins un utilisateur", ButtonType.OK);

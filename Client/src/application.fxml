@@ -45,7 +45,7 @@
             </RadialGradient>
          </fill>
       </Text>
-      <TextField fx:id="serverIPTextField" layoutX="194.0" layoutY="181.0" promptText="localhost" />
+      <TextField fx:id="serverIPTextField" layoutX="7.0" layoutY="181.0" prefHeight="29.0" prefWidth="131.0" promptText="localhost" />
       
    </children>
 </AnchorPane>

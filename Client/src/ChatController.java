@@ -98,12 +98,11 @@ public class ChatController implements Initializable, ChatObserver {
 	ChatObserver chatObserver;
 	String username;
 	String receiver2;
-	String SERVER_IP = "localhost";
 	HashMap<String, VBox> listChat = new HashMap<>();
 	ArrayList<Text> listT = new ArrayList<>();
 	HashMap<String, EventHandler<MouseEvent>> hashMapEvent = new HashMap<>();
 	private Stage stageCreatController;
-//	String SERVER_IP = "172.23.139.139";
+	String SERVER_IP;
 		
     @FXML
     private AnchorPane mainPane;
@@ -161,6 +160,10 @@ public class ChatController implements Initializable, ChatObserver {
 	private boolean stopTask;
 	
 	private boolean logOut = false;
+	public ChatController(String IPAddress) {
+		SERVER_IP = IPAddress;
+	}
+
 	private void closeWindowEvent(WindowEvent event) throws IOException {
 		if(!logOut) {
 			logoutClicked(null);
@@ -171,6 +174,9 @@ public class ChatController implements Initializable, ChatObserver {
 	@FXML
     void handleCreateGroup(ActionEvent event) throws IOException {
     	FXMLLoader loader = new FXMLLoader(getClass().getResource("creatGroupWindow.fxml"));
+    	loader.setControllerFactory(c -> {
+    		return new creatGroupController(SERVER_IP);
+    	}); 
  	    Parent root = (Parent)loader.load();
  		Scene scene = new Scene(root);
  		stageCreatController= new Stage();
@@ -257,10 +263,6 @@ public class ChatController implements Initializable, ChatObserver {
 			}
 		});
 	}
-
-    public void initServerIP(String serverIP) {
-    	SERVER_IP = serverIP;
-	}
     
     @FXML
     void sendAudioClicked(ActionEvent event) throws FileNotFoundException, RemoteException {
@@ -282,17 +284,31 @@ public class ChatController implements Initializable, ChatObserver {
     		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
     		
     		
-    		if(receiver2.charAt(0) != '#') {
-    			if(chatService.sendFile(username, receiver2, audioName, remoteFileData)) {
+				Task<Boolean> task = new Task<Boolean>() {
+					public Boolean call() {
+						boolean result = false;
+						if(receiver2.charAt(0) != '#') {
+							try {
+								result = chatService.sendFile(username, receiver2, audioName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}else{
+							try {
+								result = chatService.sendFileToGroup(username, receiver2, audioName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						return result;
+					}
+				};
+				task.setOnSucceeded(e -> {
         			displayAudio(username, receiver2, audio.getAbsolutePath());
-        		}
-	        }else{
-	        	//Envoie groupe
-	        	if(chatService.sendFileToGroup(username, receiver2, audioName, remoteFileData)) {
-	    			displayAudio(username, receiver2, audio.getAbsolutePath());
-	    		}
-	        }
-    		
+				});
+				new Thread(task).start();
     	}
     	else {
     		Alert alert = new Alert(AlertType.ERROR, "The audio file "+audioName+" is larger than 250 MB !", ButtonType.OK);
@@ -313,17 +329,31 @@ public class ChatController implements Initializable, ChatObserver {
 				
 				SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
 				
-				if(receiver2.charAt(0) != '#') {
-					if(chatService.sendFile(username, receiver2, fileName, remoteFileData)) {
+				Task<Boolean> task = new Task<Boolean>() {
+					public Boolean call() {
+						boolean result = false;
+						if(receiver2.charAt(0) != '#') {
+							try {
+								result = chatService.sendFile(username, receiver2, fileName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}else{
+							try {
+								result = chatService.sendFileToGroup(username, receiver2, fileName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						return result;
+					}
+				};
+				task.setOnSucceeded(e -> {
 						displayFile(username, receiver2, file.getAbsolutePath());
-					}
-		        }else{
-		        	//Envoie groupe
-		        	if(chatService.sendFileToGroup(username, receiver2, fileName, remoteFileData)) {
-		        		displayFile(username, receiver2, file.getAbsolutePath());
-					}
-		        }
-				
+				});
+				new Thread(task).start();
 			}
 			else {
 				Alert alert = new Alert(AlertType.ERROR, "The file "+file.getName()+" is larger than 25 MB !", ButtonType.OK);
@@ -346,6 +376,9 @@ public class ChatController implements Initializable, ChatObserver {
     	File outputImage = null;
     	String outputImageName = null;
 
+    	final File finalOutputImage;
+    	final String finalOutputImageName;
+
     	if (imageName.endsWith("png")) {
 			IMOperation op = new IMOperation();
 			op.addImage(image.getAbsolutePath());
@@ -365,6 +398,8 @@ public class ChatController implements Initializable, ChatObserver {
     		outputImage = image;
     		outputImageName = outputImage.getName();
     	}
+    	finalOutputImage = outputImage;
+    	finalOutputImageName = outputImageName;
     	if (outputImageName == null) {
           System.out.println("You cancelled the choice");
       }
@@ -374,18 +409,37 @@ public class ChatController implements Initializable, ChatObserver {
     		FileInputStream inputStream = new FileInputStream(outputImage);
 
     		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
-  			if(receiver2.charAt(0) != '#') {
-				if(chatService.sendFile(username, receiver2, outputImageName, remoteFileData)) {
-					displayImage(username, receiver2, outputImage.getAbsolutePath());
+			Task<Boolean> task = new Task<Boolean>() {
+				public Boolean call() {
+					boolean result = false;
+					  if(receiver2.charAt(0) != '#') {
+						try {
+							result = chatService.sendFile(username, receiver2, finalOutputImageName, remoteFileData);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else{
+						System.out.println("username :"+username);
+						System.out.println("receiver2:"+receiver2);
+						//Envoie groupe
+						try {
+							result = chatService.sendFileToGroup(username, receiver2, finalOutputImageName, remoteFileData);
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					return result;
 				}
-			}else{
-				System.out.println("username :"+username);
-				System.out.println("receiver2:"+receiver2);
-				//Envoie groupe
-				if(chatService.sendFileToGroup(username, receiver2, outputImageName, remoteFileData)) {
-					displayImage(username, receiver2, outputImage.getAbsolutePath());
-				}
-			}
+			};
+			task.setOnSucceeded(e -> {
+				
+							displayImage(username, receiver2, finalOutputImage.getAbsolutePath());
+				
+			});
+			new Thread(task).start();
+
 		  }
       else {
             Alert alert = new Alert(AlertType.ERROR, "The image "+outputImageName+" is larger than 25 MB !", ButtonType.OK);
@@ -413,17 +467,31 @@ public class ChatController implements Initializable, ChatObserver {
     		
     		SimpleRemoteInputStream remoteFileData = new SimpleRemoteInputStream(inputStream);
     		
-    		if(receiver2.charAt(0) != '#') {
-    			if(chatService.sendFile(username, receiver2, videoName, remoteFileData)) {
-        			displayVideo(username, receiver2, video.getAbsolutePath());
-        		}
-	        }else{
-	        	//Envoie groupe
-	        	if(chatService.sendFileToGroup(username, receiver2, videoName, remoteFileData)) {
-	    			displayVideo(username, receiver2, video.getAbsolutePath());
-	    		}
-	        }
-    		
+				Task<Boolean> task = new Task<Boolean>() {
+					public Boolean call() {
+						boolean result = false;
+						if(receiver2.charAt(0) != '#') {
+							try {
+								result = chatService.sendFile(username, receiver2, videoName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}else{
+							try {
+								result = chatService.sendFileToGroup(username, receiver2, videoName, remoteFileData);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						return result;
+					}
+				};
+				task.setOnSucceeded(e -> {
+						displayVideo(username, receiver2, video.getAbsolutePath());
+				});
+				new Thread(task).start();
     	}
     	else {
     		Alert alert = new Alert(AlertType.ERROR, "The video "+videoName+" is larger than 250 MB !", ButtonType.OK);
@@ -451,19 +519,20 @@ public class ChatController implements Initializable, ChatObserver {
 	   	if(receiver.equals(username)) {
 		   	if (text.startsWith("[") && text.endsWith("]")) {
 		    	String filename = text.substring(1, text.length()-1);
-	    		if (filename.endsWith(".png") || filename.endsWith(".jpeg") || filename.endsWith(".jpg")) {
+		    	String extension = filename.substring(filename.lastIndexOf('.'));
+	    		if (extension.equalsIgnoreCase(".png") || extension.equalsIgnoreCase(".jpeg") || extension.equalsIgnoreCase(".jpg")) {
 		    		if (!username.equals(sender)) {
 						if(toGroup) displayImage(sender, groupName, filename);
 		    			else displayImage(sender, receiver, filename);
 		    		}
 		    	}
-		    	else if (filename.endsWith(".mp4")) {
+		    	else if (extension.equalsIgnoreCase(".mp4")) {
 		    		if (!username.equals(sender)) {
 						if(toGroup) displayVideo(sender, groupName, filename);
 		    			else displayVideo(sender, receiver, filename);
 		    		}
 		    	}
-		    	else if (filename.endsWith(".mp3") || filename.endsWith(".wav")) {
+		    	else if (extension.equalsIgnoreCase(".mp3") || extension.equalsIgnoreCase(".wav")) {
 		    		if (!username.equals(sender)) {
 		    			if(toGroup) displayAudio(sender, groupName, filename);
 		    			else displayAudio(sender, receiver, filename);
