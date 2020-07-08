@@ -2,25 +2,25 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/commons-io-2.7.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/common-util-1.1.1.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/ffmpeg.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/ffmpeg-linux-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/ffmpeg-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/im4java-1.4.0.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/im4java-1.4.0-1.5.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/javacpp.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/javacpp-linux-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/javacpp-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/javacv.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/librealsense2.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/openblas.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/openblas-linux-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/openblas-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/opencv.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/opencv-linux-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/opencv-windows-x86_64.jar"/>
-	<classpathentry kind="lib" path="/home/heiwiper/Projects/TP Network/Project/Client/libs/rmiio-2.1.2.jar"/>
+	<classpathentry kind="lib" path="libs/common-util-1.1.1.jar"/>
+	<classpathentry kind="lib" path="libs/commons-io-2.7.jar"/>
+	<classpathentry kind="lib" path="libs/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="libs/ffmpeg-linux-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/ffmpeg-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/ffmpeg.jar"/>
+	<classpathentry kind="lib" path="libs/im4java-1.4.0-1.5.jar"/>
+	<classpathentry kind="lib" path="libs/im4java-1.4.0.jar"/>
+	<classpathentry kind="lib" path="libs/javacpp-linux-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/javacpp-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/javacpp.jar"/>
+	<classpathentry kind="lib" path="libs/javacv.jar"/>
+	<classpathentry kind="lib" path="libs/librealsense2.jar"/>
+	<classpathentry kind="lib" path="libs/openblas-linux-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/openblas-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/openblas.jar"/>
+	<classpathentry kind="lib" path="libs/opencv-linux-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/opencv-windows-x86_64.jar"/>
+	<classpathentry kind="lib" path="libs/opencv.jar"/>
+	<classpathentry kind="lib" path="libs/rmiio-2.1.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

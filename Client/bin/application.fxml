@@ -9,10 +9,10 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="400" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="352.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane maxHeight="400" maxWidth="600" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="352.0" xmlns="http://javafx.com/javafx/8.0.201-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <TextField fx:id="username" layoutX="151.0" layoutY="54.0" prefHeight="25.0" prefWidth="71.0" promptText="Pseudo" />
-      <PasswordField fx:id="password" layoutX="225.0" layoutY="54.0" prefHeight="25.0" prefWidth="95.0" promptText="Mot de passe" />
+      <PasswordField fx:id="password" layoutX="225.0" layoutY="54.0" onAction="#handleSignIn" prefHeight="25.0" prefWidth="95.0" promptText="Mot de passe" />
       <Button fx:id="confirm" layoutX="23.0" layoutY="142.0" mnemonicParsing="false" onAction="#handleConfirm" prefHeight="11.0" prefWidth="114.0" text="Confirmer" textFill="#1302ae">
          <font>
             <Font name="System Bold" size="12.0" />
@@ -45,6 +45,7 @@
             </RadialGradient>
          </fill>
       </Text>
+      <TextField fx:id="serverIPTextField" layoutX="7.0" layoutY="181.0" prefHeight="29.0" prefWidth="131.0" promptText="localhost" />
       
    </children>
 </AnchorPane>

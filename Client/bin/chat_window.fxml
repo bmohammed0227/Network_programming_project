@@ -4,14 +4,18 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane fx:id="mainPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ChatController">
    <children>
-      <AnchorPane fx:id="contentPane" layoutY="30.0" prefHeight="570.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <AnchorPane fx:id="contentPane" layoutY="30.0" prefHeight="600.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <HBox prefHeight="570.0" prefWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
@@ -24,18 +28,35 @@
                                     <Label layoutX="68.0" layoutY="1.0" prefHeight="20.0" text="Online Users" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane prefHeight="510.0" prefWidth="200.0">
+                              <AnchorPane prefHeight="535.0" prefWidth="200.0">
                                  <children>
                                     <ScrollPane layoutX="-35.0" layoutY="74.0" prefHeight="510.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <content>
-                                          <VBox fx:id="usersVBox" prefHeight="510.0" prefWidth="180.0" />
+                                          <VBox fx:id="usersVBox" prefHeight="535.0" prefWidth="180.0" />
                                        </content></ScrollPane>
                                  </children>
                               </AnchorPane>
                               <AnchorPane prefHeight="40.0" prefWidth="200.0">
                                  <children>
-                                    <Button fx:id="buttonLogout" layoutX="29.0" layoutY="8.0" mnemonicParsing="false" onAction="#logoutClicked" text="Log out" />
-                                    <Button fx:id="buttonCreateGroup" layoutX="104.0" layoutY="8.0" mnemonicParsing="false" onAction="#handleCreateGroup" text="Create group" />
+                                    <Button fx:id="buttonLogout" layoutX="14.0" layoutY="4.0" mnemonicParsing="false" onAction="#logoutClicked" style="-fx-background-color: transparent;">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../res/logout-box-line.png" />
+                                             </image>
+                                             <effect>
+                                                <InnerShadow />
+                                             </effect>
+                                          </ImageView>
+                                       </graphic></Button>
+                                    <Button fx:id="buttonCreateGroup" layoutX="144.0" layoutY="4.0" mnemonicParsing="false" onAction="#handleCreateGroup" style="-fx-background-color: transparent;">
+                                       <graphic>
+                                          <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../res/user-add-fill.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic></Button>
                                  </children>
                               </AnchorPane>
                            </children>
@@ -44,49 +65,100 @@
                   </AnchorPane>
                   <AnchorPane prefWidth="500.0">
                      <children>
-                        <ScrollPane layoutX="14.0" layoutY="14.0" prefHeight="504.0" prefWidth="483.0">
+                        <ScrollPane fitToWidth="true" layoutX="14.0" layoutY="14.0" prefHeight="535.0" prefWidth="483.0">
                           <content>
-                            <AnchorPane fx:id="chatAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="505.0" prefWidth="478.0">
+                            <AnchorPane fx:id="chatAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="535.0" prefWidth="470.0">
                                  <children>
-                                    <VBox fx:id="chatVBox" layoutX="-5.0" layoutY="1.0" prefHeight="496.0" prefWidth="474.0" />
+                                    <VBox fx:id="chatVBox" layoutX="-5.0" layoutY="1.0" maxWidth="460.0" prefHeight="535.0" prefWidth="460.0" />
                                  </children>
                               </AnchorPane>
                           </content>
                         </ScrollPane>
                         <TextArea fx:id="chatBox" prefHeight="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="200.0" />
-                        <Button fx:id="buttonSendFile" mnemonicParsing="false" onAction="#sendFileClicked" prefHeight="44.0" prefWidth="40.0" text="file" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0" />
-                        <Button fx:id="buttonSendImg" mnemonicParsing="false" onAction="#sendImageClicked" prefHeight="44.0" prefWidth="40.0" text="img" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="80.0" />
-                        <Button fx:id="buttonSendText" mnemonicParsing="false" onAction="#sendMessageClicked" prefHeight="44.0" prefWidth="40.0" text="txt" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                        <Button fx:id="buttonSendaudio" layoutX="301.0" layoutY="526.0" mnemonicParsing="false" onAction="#sendAudioClicked" prefHeight="44.0" prefWidth="40.0" text="aud" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="159.0" />
-                        <Button fx:id="buttonSendVid" layoutX="390.0" layoutY="536.0" mnemonicParsing="false" onAction="#sendVideoClicked" prefHeight="44.0" prefWidth="40.0" text="vid" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="120.0" />
+                        <Button fx:id="buttonSendFile" mnemonicParsing="false" onAction="#sendFileClicked" prefHeight="44.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../res/file-fill.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Button fx:id="buttonSendImg" mnemonicParsing="false" onAction="#sendImageClicked" prefHeight="44.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="120.0">
+                           <graphic>
+                              <ImageView disable="true" fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../res/image-2-fill.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Button fx:id="buttonSendText" mnemonicParsing="false" onAction="#sendMessageClicked" prefHeight="44.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="159.0">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../res/send-plane-2-fill.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Button fx:id="buttonSendaudio" layoutX="301.0" layoutY="526.0" mnemonicParsing="false" onAction="#sendAudioClicked" prefHeight="44.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="80.0">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="24.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../res/mv-fill.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
+                        <Button fx:id="buttonSendVid" layoutX="390.0" layoutY="536.0" mnemonicParsing="false" onAction="#sendVideoClicked" prefHeight="44.0" prefWidth="40.0" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="40.0">
+                           <graphic>
+                              <ImageView fitHeight="24.0" fitWidth="55.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../res/film-fill.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic></Button>
                      </children>
                   </AnchorPane>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
                         <VBox layoutX="50.0" layoutY="133.0" prefHeight="570.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <AnchorPane prefHeight="30.0" prefWidth="200.0">
+                              <VBox prefHeight="200.0" prefWidth="100.0">
                                  <children>
-                                    <Label fx:id="usernameLabel" text="username" textAlignment="CENTER" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <Label fx:id="usernameLabel" text="username" textAlignment="CENTER" wrapText="true">
                                        <font>
                                           <Font size="24.0" />
                                        </font>
                                     </Label>
+                                    <Text fx:id="info" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="197.13671875">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Text>
                                  </children>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-                              <AnchorPane prefHeight="340.0" prefWidth="200.0" />
+                              </VBox>
+                              <HBox>
+                                 <children>
+                                    <Button fx:id="startCameraBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#startCamera" prefHeight="48.0" prefWidth="48.0" style="-fx-background-color: transparent;">
+                                       <graphic>
+                                          <ImageView fitHeight="48.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@../res/video-chat-fill.png" />
+                                             </image>
+                                          </ImageView>
+                                       </graphic>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <ScrollPane fitToHeight="true" fitToWidth="false" prefHeight="350.0" prefWidth="200.0">
+                                 <content>
+                                    <VBox fx:id="cameraVBox" maxHeight="346.0" maxWidth="180.0" prefHeight="346.0" prefWidth="180.0" />
+                                 </content>
+                              </ScrollPane>
                            </children>
                         </VBox>
                      </children>
                   </AnchorPane>
                </children>
             </HBox>
-         </children>
-      </AnchorPane>
-      <AnchorPane fx:id="titleBar" prefHeight="30.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Label layoutX="10.0" layoutY="5.0" text="Network Project" />
          </children>
       </AnchorPane>
    </children>

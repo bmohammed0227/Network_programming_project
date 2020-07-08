@@ -24,4 +24,6 @@ public interface ChatService extends Remote {
 	boolean sendFileToGroup(String sender, String receiver, String filename, RemoteInputStream inputFile)
 			throws RemoteException;
 	public ArrayList<Group> getAllgroups() throws RemoteException; 
+	public Compte getCompte(String user) throws RemoteException;
+	public Group getGroup(String groupName) throws RemoteException;
 }

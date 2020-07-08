@@ -104,6 +104,9 @@ public class ChatController implements Initializable, ChatObserver {
 	private Stage stageCreatController;
 	String SERVER_IP;
 		
+	@FXML
+    private Text info;
+	
     @FXML
     private AnchorPane mainPane;
 
@@ -1070,6 +1073,20 @@ public class ChatController implements Initializable, ChatObserver {
 							System.out.println("L'utilisateur selectionnï¿½ : "+user);
 							chatAnchorPane.getChildren().clear(); // on efface l'ancienne fenetre
 							chatAnchorPane.getChildren().setAll(listChat.get(user)); // on ajoute la fenetre selectionnï¿½
+							String information = "";
+							try {
+								if(user.charAt(0)=='#') {
+									Group group = chatService.getGroup(user);
+									information = "Membres:\n"+ group.getParticipants().toString();
+								}else {
+									Compte compte = chatService.getCompte(user);
+									information = "Nom: "+compte.getFamilyname()+"\nPrénom: "+compte.getFirstname()+"\nAdresse Mail: "+compte.getEmail();
+								}
+								
+							} catch (RemoteException e2) {
+								e2.printStackTrace();
+							}
+							info.setText(information);
 						});
 				   } 
 				};  

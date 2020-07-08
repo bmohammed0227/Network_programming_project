@@ -308,4 +308,14 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 	public ArrayList<Group> getAllgroups() throws RemoteException {
 		return this.CHAT_OBSERVABLE.getAllGroups();
 	}
+	
+	@Override
+	public Compte getCompte(String user) throws RemoteException {
+		return searchByPseudo(user);
+	}
+
+	@Override
+	public Group getGroup(String groupName) throws RemoteException {
+		return CHAT_OBSERVABLE.getGroup(groupName);
+	}
 }
