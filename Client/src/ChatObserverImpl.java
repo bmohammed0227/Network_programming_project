@@ -1,11 +1,6 @@
-import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-
-import com.healthmarketscience.rmiio.RemoteInputStream;
 
 public class ChatObserverImpl extends UnicastRemoteObject implements ChatObserver {
 

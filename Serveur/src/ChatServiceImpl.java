@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.ImageIcon;
-
 import org.apache.commons.io.IOUtils;
 
 import com.healthmarketscience.rmiio.RemoteInputStream;
@@ -285,6 +283,12 @@ public class ChatServiceImpl extends UnicastRemoteObject implements ChatService 
 			IOUtils.copy(inputStream, outputStream);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	    
 	    return true;

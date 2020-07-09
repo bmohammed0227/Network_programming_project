@@ -8,8 +8,6 @@
 	<classpathentry kind="lib" path="libs/ffmpeg-linux-x86_64.jar"/>
 	<classpathentry kind="lib" path="libs/ffmpeg-windows-x86_64.jar"/>
 	<classpathentry kind="lib" path="libs/ffmpeg.jar"/>
-	<classpathentry kind="lib" path="libs/im4java-1.4.0-1.5.jar"/>
-	<classpathentry kind="lib" path="libs/im4java-1.4.0.jar"/>
 	<classpathentry kind="lib" path="libs/javacpp-linux-x86_64.jar"/>
 	<classpathentry kind="lib" path="libs/javacpp-windows-x86_64.jar"/>
 	<classpathentry kind="lib" path="libs/javacpp.jar"/>

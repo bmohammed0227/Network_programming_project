@@ -2,12 +2,10 @@ import java.io.File;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-
 import javax.swing.ImageIcon;
-
 import com.healthmarketscience.rmiio.RemoteInputStream;
-import com.healthmarketscience.rmiio.RemoteInputStreamServer;
 import com.healthmarketscience.rmiio.RemoteOutputStream;
+
 public interface ChatService extends Remote {
 	public int sent(ArrayList list) throws RemoteException;
 	public boolean sendTextTo(String sender, String receiver, String text) throws RemoteException;

@@ -3,7 +3,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -47,7 +46,6 @@ public class creatGroupController {
 	void handleAdd(ActionEvent event) throws RemoteException, MalformedURLException, NotBoundException {
 		ObservableList<String> selectedItems = TV_OnlineUsers.getSelectionModel().getSelectedItems();
 
-		// si l'utilisateur entre un nom d'une personne ou d'un groupe existant erreur (apr�s)
 		if(nameGroup.getText().equals("")) {
 			Alert alert = new Alert(AlertType.ERROR, "Veuillez entrer un nom de groupe", ButtonType.OK);
     		alert.showAndWait();

@@ -18,37 +18,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.Timer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.swing.ImageIcon;
-
-import org.bytedeco.ffmpeg.global.avcodec;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
 import org.bytedeco.javacv.Java2DFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameConverter;
-import org.bytedeco.javacv.OpenCVFrameConverter.ToMat;
 import org.bytedeco.javacv.OpenCVFrameGrabber;
-import org.bytedeco.opencv.opencv_core.Mat;
-import org.bytedeco.opencv.opencv_videoio.VideoCapture;
-import org.im4java.core.ConvertCmd;
-import org.im4java.core.IM4JavaException;
-import org.im4java.core.IMOperation;
-
+//import org.im4java.core.ConvertCmd;
+//import org.im4java.core.IM4JavaException;
+//import org.im4java.core.IMOperation;
 import com.healthmarketscience.rmiio.RemoteOutputStreamServer;
 import com.healthmarketscience.rmiio.SimpleRemoteInputStream;
 import com.healthmarketscience.rmiio.SimpleRemoteOutputStream;
-
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -67,7 +47,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -294,14 +273,12 @@ public class ChatController implements Initializable, ChatObserver {
 							try {
 								result = chatService.sendFile(username, receiver2, audioName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}else{
 							try {
 								result = chatService.sendFileToGroup(username, receiver2, audioName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -339,14 +316,12 @@ public class ChatController implements Initializable, ChatObserver {
 							try {
 								result = chatService.sendFile(username, receiver2, fileName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}else{
 							try {
 								result = chatService.sendFileToGroup(username, receiver2, fileName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -368,39 +343,18 @@ public class ChatController implements Initializable, ChatObserver {
     void sendImageClicked(ActionEvent event) throws RemoteException, IOException {
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle("Selectionez une image pour l'envoyer:");
-    	ExtensionFilter pngFilter = new ExtensionFilter("Images PNG (.png)", "*.png");
     	ExtensionFilter jpegFilter = new ExtensionFilter("Images JPEG (.jpeg)", "*.jpeg");
     	ExtensionFilter jpgFilter = new ExtensionFilter("Images JPG (.jpg)", "*.jpg");
-    	fileChooser.getExtensionFilters().add(pngFilter);
     	fileChooser.getExtensionFilters().add(jpegFilter);
     	fileChooser.getExtensionFilters().add(jpgFilter);
     	File image = fileChooser.showOpenDialog(buttonSendText.getScene().getWindow());
     	String imageName = image.getName();
     	File outputImage = null;
     	String outputImageName = null;
-
     	final File finalOutputImage;
     	final String finalOutputImageName;
-
-    	if (imageName.endsWith("png")) {
-			IMOperation op = new IMOperation();
-			op.addImage(image.getAbsolutePath());
-			outputImageName = imageName.substring(0, imageName.lastIndexOf('.')) +".jpg" ;
-			outputImage = new File(outputImageName);
-			outputImage.createNewFile();
-			op.addImage(outputImage.getName());
-			ConvertCmd convert = new ConvertCmd();
-			try {
-				convert.run(op);
-			} catch (InterruptedException | IM4JavaException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} 
-		}
-    	else {
-    		outputImage = image;
-    		outputImageName = outputImage.getName();
-    	}
+    	outputImage = image;
+    	outputImageName = outputImage.getName();
     	finalOutputImage = outputImage;
     	finalOutputImageName = outputImageName;
     	if (outputImageName == null) {
@@ -419,7 +373,6 @@ public class ChatController implements Initializable, ChatObserver {
 						try {
 							result = chatService.sendFile(username, receiver2, finalOutputImageName, remoteFileData);
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}else{
@@ -429,7 +382,6 @@ public class ChatController implements Initializable, ChatObserver {
 						try {
 							result = chatService.sendFileToGroup(username, receiver2, finalOutputImageName, remoteFileData);
 						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
@@ -477,14 +429,12 @@ public class ChatController implements Initializable, ChatObserver {
 							try {
 								result = chatService.sendFile(username, receiver2, videoName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}else{
 							try {
 								result = chatService.sendFileToGroup(username, receiver2, videoName, remoteFileData);
 							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 						}
@@ -523,7 +473,7 @@ public class ChatController implements Initializable, ChatObserver {
 		   	if (text.startsWith("[") && text.endsWith("]")) {
 		    	String filename = text.substring(1, text.length()-1);
 		    	String extension = filename.substring(filename.lastIndexOf('.'));
-	    		if (extension.equalsIgnoreCase(".png") || extension.equalsIgnoreCase(".jpeg") || extension.equalsIgnoreCase(".jpg")) {
+	    		if (extension.equalsIgnoreCase(".jpeg") || extension.equalsIgnoreCase(".jpg")) {
 		    		if (!username.equals(sender)) {
 						if(toGroup) displayImage(sender, groupName, filename);
 		    			else displayImage(sender, receiver, filename);
@@ -595,7 +545,6 @@ public class ChatController implements Initializable, ChatObserver {
     }
     
 	private boolean displayAudio(String sender, String receiver3, String filename) {
-		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("displayVideo");
 			System.out.println(sender + " has sent a video");
 			TextFlow tempFlow = new TextFlow();
@@ -666,7 +615,6 @@ public class ChatController implements Initializable, ChatObserver {
 			new Thread(task).start();
 	
 			if (!username.equals(sender)) {
-				//TODO
 				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(sender);
 				else chatVBox = listChat.get(receiver3);
 				tempFlow.getStyleClass().add("tempFlowFlipped");
@@ -697,10 +645,9 @@ public class ChatController implements Initializable, ChatObserver {
 		return true;
 	}
 	
-	//TODO
 	private boolean displayFile(String sender, String receiver3, String filename) {
-		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("DisplayFile");
+			System.out.println("fileName:"+filename);
 			Hyperlink fileLink = new Hyperlink(filename.substring(filename.lastIndexOf('/')+1));
 			fileLink.getStyleClass().add("filename");
 			fileLink.setOnAction(event -> {
@@ -756,7 +703,6 @@ public class ChatController implements Initializable, ChatObserver {
 			
 			HBox hbox = new HBox();
 			if (!username.equals(sender)) {
-				//TODO
 				if(receiver3.charAt(0)!='#') chatVBox = listChat.get(sender);
 				else chatVBox = listChat.get(receiver3);
 				//chatVBox = listChat.get(sender);
@@ -786,7 +732,6 @@ public class ChatController implements Initializable, ChatObserver {
 	}
 
 	private boolean displayVideo(String sender, String receiver3, String filename) {
-		//if(receiver3.equals(username) || sender.equals(username)) {
 			System.out.println("displayVideo");
 			System.out.println(sender + " has sent a video");
 			TextFlow tempFlow = new TextFlow();
@@ -895,7 +840,6 @@ public class ChatController implements Initializable, ChatObserver {
 						getFile(filename);
 					return true;
 				} catch (RemoteException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 					return false;
 				}
@@ -911,7 +855,6 @@ public class ChatController implements Initializable, ChatObserver {
 						System.out.println(imageFile.getAbsolutePath());
 						bufferedImage = ImageIO.read(imageFile.getAbsoluteFile());
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				else
@@ -919,7 +862,6 @@ public class ChatController implements Initializable, ChatObserver {
 						System.out.println(new File(filename).toString());
 						bufferedImage = ImageIO.read(new File(filename));
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				// Create a buffered image with transparency
@@ -992,15 +934,14 @@ public class ChatController implements Initializable, ChatObserver {
 		buttonSendImg.setDisable(true);
 		buttonSendaudio.setDisable(true);
 		buttonSendVid.setDisable(true);
+		info.setText("");
 		chatBox.setOnKeyPressed(new EventHandler<KeyEvent>() {
-
 			@Override
 			public void handle(KeyEvent keyEvent) {
 				try {
 					if(keyEvent.getCode() == KeyCode.ENTER)
 						sendMessageClicked(null);
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -1053,12 +994,14 @@ public class ChatController implements Initializable, ChatObserver {
 			buttonSendImg.setDisable(true);
 			buttonSendaudio.setDisable(true);
 			buttonSendVid.setDisable(true);
+			info.setText("");
 		}
         return true;
 	}
 	
 	EventHandler<MouseEvent> function_event(String user) {
 		if(this.hashMapEvent.get(user)==null) {
+			info.setText("");
 			EventHandler<MouseEvent> event =  new EventHandler<MouseEvent>() { 
 				   @Override 
 				   public void handle(MouseEvent e) { 

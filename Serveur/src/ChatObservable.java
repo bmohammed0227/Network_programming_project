@@ -1,12 +1,5 @@
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-
-import javax.swing.ImageIcon;
-
-import com.healthmarketscience.rmiio.RemoteInputStream;
 
 public class ChatObservable {
 	private final ArrayList<ChatObserver> chatObserverList = new ArrayList<>();
